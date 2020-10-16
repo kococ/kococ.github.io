@@ -1,0 +1,374 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MySQL优化 | 北青永恒</title><meta name="description" content="1.优化哲学 1.1 优化有风险 1.2 优化的范围 存储、主机和操作系统: 主机架构稳定性 I&#x2F;O规划及配置 Swap OS内核参数 网络问题 应用 :（Index，lock，session） 应用程序稳定性和性能 SQL语句性能 串行访问资源 性能欠佳会话管理 数据库优化:（内存、数据库设计、参数） 内存 数据库结构(物理&amp;逻辑) 实例配置 2.优化工具介绍 2.1 系统层 CPU"><meta name="keywords" content="留下来"><meta name="author" content="Prous"><meta name="copyright" content="Prous"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="https://www.kococ.cn/favicon.ico"><link rel="canonical" href="https://xoxoyun.gitee.io/posts/43137/"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin="crossorigin"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="preconnect" href="//zz.bdstatic.com"/><meta property="og:type" content="article"><meta property="og:title" content="MySQL优化"><meta property="og:url" content="https://xoxoyun.gitee.io/posts/43137/"><meta property="og:site_name" content="北青永恒"><meta property="og:description" content="1.优化哲学 1.1 优化有风险 1.2 优化的范围 存储、主机和操作系统: 主机架构稳定性 I&#x2F;O规划及配置 Swap OS内核参数 网络问题 应用 :（Index，lock，session） 应用程序稳定性和性能 SQL语句性能 串行访问资源 性能欠佳会话管理 数据库优化:（内存、数据库设计、参数） 内存 数据库结构(物理&amp;逻辑) 实例配置 2.优化工具介绍 2.1 系统层 CPU"><meta property="og:image" content="https://cdn.jsdelivr.net/gh/kococ/IMAGE/49.jpg"><meta property="article:published_time" content="2019-04-23T12:41:00.000Z"><meta property="article:modified_time" content="2020-08-03T06:29:27.371Z"><meta name="twitter:card" content="summary"><script>var activateDarkMode = function () {
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000')
+  }
+}
+var activateLightMode = function () {
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#fff')
+  }
+}
+
+var getCookies = function (name) {
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) return parts.pop().split(';').shift()
+}
+
+var autoChangeMode = 'false'
+var t = getCookies('theme')
+if (autoChangeMode === '1') {
+  var isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+  var isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+  var isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined) {
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport) {
+      console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+      var now = new Date()
+      var hour = now.getHours()
+      var isNight = hour <= 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+      if (Cookies.get('theme') === undefined) {
+        e.matches ? activateDarkMode() : activateLightMode()
+      }
+    })
+  } else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else if (autoChangeMode === '2') {
+  now = new Date()
+  hour = now.getHours()
+  isNight = hour <= 6 || hour >= 18
+  if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else {
+  if (t === 'dark') activateDarkMode()
+  else if (t === 'light') activateLightMode()
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime_unit: '天',
+  runtime: false,
+  copyright: undefined,
+  ClickShowText: undefined,
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: {"bookmark":{"message_prev":"按","message_next":"键将本页加入书签"},"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#121212","position":"bottom-left"},
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  baiduPush: true,
+  highlightCopy: true,
+  highlightLang: true,
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isanchor: false    
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isSidebar: false,
+  postUpdate: '2020-08-03 14:29:27'
+}</script><noscript><style>
+#nav {
+  opacity: 1
+}
+.justified-gallery img {
+  opacity: 1
+}
+</style></noscript><meta name="generator" content="Hexo 5.0.0"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" data-lazy-src="https://www.kococ.cn/wxuser.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">76</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">62</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">7</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友联</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://cdn.jsdelivr.net/gh/kococ/IMAGE/49.jpg)"><nav id="nav"><span class="pull-left" id="blog_name"><a class="blog_title" id="site-name" href="/">北青永恒</a></span><span class="pull-right menus"><div id="search_button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友联</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><span class="toggle-menu close"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">MySQL优化</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2019-04-23T12:41:00.000Z" title="发表于 2019-04-23 20:41:00">2019-04-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2020-08-03T06:29:27.371Z" title="更新于 2020-08-03 14:29:27">2020-08-03</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/MySQL%E8%BF%9B%E9%98%B6/">MySQL进阶</a></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.7k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>6分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><ul>
+<li>1.优化哲学</li>
+<li>1.1 优化有风险</li>
+<li>1.2 优化的范围</li>
+<li>存储、主机和操作系统:</li>
+<li>主机架构稳定性</li>
+<li>I/O规划及配置</li>
+<li>Swap</li>
+<li>OS内核参数</li>
+<li>网络问题</li>
+<li>应用 :（Index，lock，session）</li>
+<li>应用程序稳定性和性能</li>
+<li>SQL语句性能</li>
+<li>串行访问资源</li>
+<li>性能欠佳会话管理</li>
+<li>数据库优化:（内存、数据库设计、参数）</li>
+<li>内存</li>
+<li>数据库结构(物理&amp;逻辑)</li>
+<li>实例配置</li>
+<li>2.优化工具介绍</li>
+<li>2.1 系统层</li>
+<li>CPU : 计算(主)和调度(次)</li>
+<li>MEM : 缓存和缓冲</li>
+<li>IO : 输入和输出</li>
+</ul>
+<p>(1) top命令</p>
+<p>%Cpu(s): 0.0 us, 0.0 sy, 100.0 id, 0.0 wa</p>
+<ul>
+<li><p>id 空闲的CPU时间片占比</p>
+</li>
+<li><p>us 用户程序工作所占用的时间片占比</p>
+</li>
+<li><p>sy 内核工作花费的cpu时间片占比</p>
+</li>
+<li><p>过高的原因:</p>
+</li>
+<li><p>内核本身bug</p>
+</li>
+<li><p>并发很高</p>
+</li>
+<li><p>锁</p>
+</li>
+<li><p>wa cpu用来等待的时间片占比</p>
+</li>
+<li><p>IO</p>
+</li>
+<li><p>等待大的处理事件</p>
+</li>
+<li><p>锁</p>
+</li>
+</ul>
+<p>KiB Mem : 4937752 total, 3988956 free, 476100 used, 472696 buff/cache 4193924 avail Mem KiB Swap: 1048572 total, 1048572 free, 0 used.</p>
+<p>(2) iostat</p>
+<p>[root@db01 ~]# iostat -dk 1</p>
+<ul>
+<li>一般情况下，CPU高，IO也应该高。</li>
+<li>如果：CPU 高 ，IO 比较低</li>
+<li>wait 高： 有可以能IO出问题了（Raid ，过度条带化）</li>
+<li>SyS 高： 有可能是锁的问题，需要进一步去数据库中判断</li>
+</ul>
+<p>(3) vmstat</p>
+<p>[root@db01 ~]# vmstat 1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@db01 ~]# vmstat 1</span><br></pre></td></tr></table></figure>
+
+<p>2.2 数据库层工具</p>
+<p>show status<br>show variables<br>show index<br>show processlist<br>show slave status<br>show engine innodb status<br>desc /explain<br>slowlog</p>
+<p>扩展类深度优化:<br>pt系列（pt-query-digest pt-osc pt-index 等）<br>mysqlslap<br>sysbench<br>information_schema （I_S）<br>performance_schema (P_S)<br>sys </p>
+<p>3.优化思路</p>
+<p>3.0 未优化前的压力测试</p>
+<p>db01 [(none)]&gt;create database oldguo charset utf8mb4;<br>db01 [(none)]&gt;use oldguo;<br>db01 [oldguo]&gt;set sql_log_bin=0;<br>db01 [oldguo]&gt;source t100w.sql<br>db01 [oldguo]&gt;grant all on <em>.</em> to root@’localhost’ identified by ‘123’;</p>
+<p>[root@db01 ~]# mysqlslap –defaults-file=/etc/my.cnf \<br>–concurrency=100 –iterations=1 –create-schema=’oldguo’ \<br>–query=”select * from oldguo.t100w where k2=’ABxy’” engine=innodb \<br>–number-of-queries=200 -uroot -p123 -verbose</p>
+<p>3.1 主机,存储,网络</p>
+<ul>
+<li><p>主机</p>
+</li>
+<li><p>真实的硬件（PC Server）: DELL R系列 ，华为，浪潮，HP，曙光,联想</p>
+</li>
+<li><p>云产品：ECS、数据库RDS、DRDS、PolarDB</p>
+</li>
+<li><p>IBM 小型机 P6 570 595 P7 720 750 780 P8</p>
+</li>
+<li><p>CPU根据数据库类型</p>
+</li>
+<li><p>OLTP</p>
+</li>
+<li><p>OLAP</p>
+</li>
+<li><p>IO密集型：线上系统，OLTP主要是IO密集型的业务，高并发</p>
+</li>
+<li><p>CPU密集型：数据分析数据处理，OLAP，cpu密集型的，需要CPU高计算能力（i系列，IBM power系列）</p>
+</li>
+<li><p>CPU密集型： I 系列的，主频很高，核心少</p>
+</li>
+<li><p>IO密集型： E系列（至强），主频相对低，核心数量多</p>
+</li>
+<li><p>内存</p>
+</li>
+<li><p>建议2-3倍cpu核心数量 （ECC）</p>
+</li>
+<li><p>磁盘选择</p>
+</li>
+<li><p>SATA-III SAS Fc SSD（sata） pci-e ssd Flash</p>
+</li>
+<li><p>主机 RAID卡的BBU(Battery Backup Unit)关闭</p>
+</li>
+<li><p>存储</p>
+</li>
+<li><p>根据存储数据种类的不同，选择不同的存储设备</p>
+</li>
+<li><p>配置合理的RAID级别(raid5、raid10、热备盘)</p>
+</li>
+<li><p>r0 :条带化 ,性能高</p>
+</li>
+<li><p>r1 :镜像，安全</p>
+</li>
+<li><p>r5 :校验+条带化，安全较高+性能较高（读写性能较低 （适合于读多写少）</p>
+</li>
+<li><p>r10：安全+性能都很高，最少四块盘，浪费一半的空间（高IO要求）</p>
+</li>
+<li><p>网络</p>
+</li>
+<li><p>1、硬件买好的（单卡单口）</p>
+</li>
+<li><p>2、网卡绑定（bonding），交换机堆叠</p>
+</li>
+<li><p>以上问题，提前规避掉。</p>
+</li>
+</ul>
+<p>3.2 系统</p>
+<p>Swap调整</p>
+<p>echo 0 &gt;/proc/sys/vm/swappiness的内容改成0（临时），<br>vim /etc/sysctl.conf<br>上添加vm.swappiness=0（永久）<br>sysctl -p</p>
+<p>IO调度策略</p>
+<p>centos 7 默认是deadline<br>cat /sys/block/sda/queue/scheduler</p>
+<p>#临时修改为deadline(centos6)</p>
+<p>echo deadline &gt;/sys/block/sda/queue/scheduler<br>vi /boot/grub/grub.conf</p>
+<p>更改到如下内容:<br>kernel /boot/vmlinuz-2.6.18-8.el5 ro root=LABEL=/ elevator=deadline rhgb quiet</p>
+<p>IO：<br> raid<br> no<br> lvm<br> ext4或xfs<br> ssd<br> IO调度策略</p>
+<p>提前规划好以上所有问题，减轻MySQL优化的难度。</p>
+<p>3.3 数据库实例(参数)</p>
+<p>3.3.1 Max_connections <strong>*</strong></p>
+<p>（1）简介</p>
+<p>Mysql的最大连接数，如果服务器的并发请求量比较大，可以调高这个值，当然这是要建立在机器能够支撑的情况下，因为如果连接数越来越多，mysql会为每个连接提供缓冲区，就会开销的越多的内存，所以需要适当的调整该值，不能随便去提高设值。</p>
+<p>（2）判断依据</p>
+<p> show variables like ‘max_connections’;<br> +—————–+——-+<br>| Variable_name | Value |<br> +—————–+——-+<br>| max_connections | 151 |<br>+—————–+——-+<br>show status like ‘Max_used_connections’;<br>+———————-+——-+<br>| Variable_name | Value |<br>+———————-+——-+<br>| Max_used_connections | 101 |<br>+———————-+——-+ </p>
+<p>（3）修改方式举例</p>
+<p>vim /etc/my.cnf<br>Max_connections=1024</p>
+<p>补充:</p>
+<ul>
+<li>1.开启数据库时,我们可以临时设置一个比较大的测试值</li>
+<li>2.观察show status like ‘Max_used_connections’;变化</li>
+<li>3.如果max_used_connections跟max_connections相同,</li>
+<li>那么就是max_connections设置过低或者超过服务器的负载上限了</li>
+</ul>
+<p>3.3.2 back_log ***</p>
+<p>（1）简介</p>
+<p>mysql能暂存的连接数量，当主要mysql线程在一个很短时间内得到非常多的连接请求时候它就会起作用，如果mysql的连接数据达到max_connections时候，新来的请求将会被存在堆栈中，等待某一连接释放资源，该推栈的数量及back_log,如果等待连接的数量超过back_log，将不被授予连接资源。</p>
+<p>back_log值指出在mysql暂时停止回答新请求之前的短时间内有多少个请求可以被存在推栈中，只有如果期望在一个短时间内有很多连接的时候需要增加它</p>
+<p>（2）判断依据</p>
+<p>show full processlist </p>
+<p>发现大量的待连接进程时，就需要加大back_log或者加大max_connections的值 （3）修改方式举例</p>
+<p>vim /etc/my.cnf<br>back_log=1024</p>
+<p>3.3.3 wait_timeout和interactive_timeout</p>
+<p>（1）简介</p>
+<ul>
+<li>wait_timeout：指的是mysql在关闭一个非交互的连接之前所要等待的秒数</li>
+<li>interactive_timeout：指的是mysql在关闭一个交互的连接之前所需要等待的秒数，比如我们在终端上进行mysql管理，使用的即使交互的连接，这时候，如果没有操作的时间超过了interactive_time设置的时间就会自动的断开，默认的是28800，可调优为7200。</li>
+<li>wait_timeout:如果设置太小，那么连接关闭的就很快，从而使一些持久的连接不起作用</li>
+</ul>
+<p>（2）设置建议</p>
+<p>如果设置太大，容易造成连接打开时间过长，在show processlist时候，能看到很多的连接 ，一般希望wait_timeout尽可能低</p>
+<p>（3）修改方式举例</p>
+<p>wait_timeout=60<br>interactive_timeout=1200</p>
+<ul>
+<li>长连接的应用，为了不去反复的回收和分配资源，降低额外的开销。</li>
+<li>一般我们会将wait_timeout设定比较小，interactive_timeout要和应用开发人员沟通长链接的应用是否很多。如果他需要长链接，那么这个值可以不需要调整。</li>
+<li>另外还可以使用类外的参数弥补。</li>
+</ul>
+<p>3.3.4 key_buffer_size <strong>*</strong></p>
+<p>(1) myisam 表的索引缓冲区</p>
+<p>(2) 临时表的缓冲区</p>
+<p> mysql&gt; show status like “created_tmp%”;<br> +————————-+——-+<br>| Variable_name | Value |<br>+————————-+——-+<br>| Created_tmp_disk_tables | 0 |<br> | Created_tmp_files | 6 |<br> | Created_tmp_tables | 1 |<br>Created_tmp_tables/(Created_tmp_disk_tables+ Created_tmp_tables)越高越好<br>Created_tmp_disk_tables/(Created_tmp_disk_tables + Created_tmp_tables)<br>Created_tmp_disk_tables/(Created_tmp_disk_tables + Created_tmp_tables)</p>
+<p>控制在5%-10%以内</p>
+<p>mysql&gt; show variables like “key_buffer_size%”;</p>
+<p>3.4 优化后的压力测试</p>
+<p>max_connections=1024<br>back_log=128<br>wait_timeout=60<br>interactive_timeout=7200<br>key_buffer_size=16M<br>query_cache_size=64M<br>query_cache_type=1<br>query_cache_limit=50M<br>max_connect_errors=20<br>sort_buffer_size=2M<br>max_allowed_packet=32M<br>join_buffer_size=2M<br>thread_cache_size=200<br>innodb_buffer_pool_size=1024M<br>innodb_flush_log_at_trx_commit=1<br>innodb_log_buffer_size=32M<br>innodb_log_file_size=128M<br>innodb_log_files_in_group=3<br>binlog_cache_size=2M<br>max_binlog_cache_size=8M<br>max_binlog_size=512M<br>expire_logs_days=7<br>read_buffer_size=2M<br>read_rnd_buffer_size=2M<br>bulk_insert_buffer_size=8M</p>
+<p>3.5 应用层面优化</p>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined" rel="external nofollow noreferrer">Prous</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://xoxoyun.gitee.io/posts/43137/">https://xoxoyun.gitee.io/posts/43137/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://xoxoyun.gitee.io" target="_blank">北青永恒</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/kococ/IMAGE/49.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/61456/"><img class="prev-cover" data-lazy-src="https://cdn.jsdelivr.net/gh/kococ/IMAGE/64.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Zabbix4.0监控系统设计与部属</div></div></a></div><div class="next-post pull-right"><a href="/posts/35691/"><img class="next-cover" data-lazy-src="https://cdn.jsdelivr.net/gh/kococ/IMAGE/64.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">搭建个人Leanote云笔记本</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></article></main><footer id="footer" style="background-image: url(https://cdn.jsdelivr.net/gh/kococ/IMAGE/49.jpg)" data-type="photo"><div id="footer-wrap"><div class="copyright">&copy;2018 - 2020 By Prous</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">既来之 则安之</div><div class="icp"><a target="_blank" rel="noopener external nofollow noreferrer" href="http://beian.miit.gov.cn/"><img class="icp-icon" src="/img/icp.png"/><span>豫ICP备20001100号</span></a></div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="font_plus" type="button" title="放大字体"><i class="fas fa-plus"></i></button><button id="font_minus" type="button" title="缩小字体"><i class="fas fa-minus"></i></button><button id="translateLink" type="button" title="简繁转换">簡</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="chat_btn" type="button" title="rightside.chat_btn"><i class="fas fa-sms"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a>
+ <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module" defer></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js" async></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    window.valine = new Valine({
+      el: '#vcomment',
+      appId: '',
+      appKey: '',
+      placeholder: 'Please leave your footprints',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'en',
+      recordIP: false,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: false,
+      path: window.location.pathname,
+    });
+    if ('nick,mail') { valine.config.requiredFields= 'nick,mail'.split(',') }
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else $.getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js', initValine)
+}
+
+if ('Valine' === 'Valine' || !true) {
+  if (true) loadComment(document.querySelector('#vcomment'),loadValine)
+  else setTimeout(() => loadValine(), 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><div class="aplayer no-destroy" data-id="712292593" data-server="netease" data-type="artist" data-fixed="true" data-mini="true" data-listFolded="true" data-order="random" data-preload="none" data-autoplay="true" muted></div><script src="https://cdn.jsdelivr.net/gh/xiabo2/CDN@latest/fishes.js"></script><canvas class="fireworks"></canvas><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="/js/third-party/fireworks.js"></script><script defer="defer" id="ribbon" src="/js/third-party/canvas-ribbon.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="true"></script><script src="/js/third-party/activate-power-mode.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+document.body.addEventListener('input', POWERMODE);
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/gh/metowolf/MetingJS@1.2/dist/Meting.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: [
+    'title',
+    'meta[name=description]',
+    '#config_change',
+    '#body-wrap',
+    '#rightside-config-hide',
+    '#rightside-config-show',
+    '.js-pjax'
+  ],
+  cacheBust: false,
+})
+
+document.addEventListener('pjax:complete', function () {
+  refreshFn()
+
+  $('script[data-pjax]').each(function () {
+    $(this).parent().append($(this).remove())
+  })
+
+  GLOBAL_CONFIG.islazyload && lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  if (typeof gtag === 'function') {
+    gtag('config', '', {'page_path': window.location.pathname});
+  }
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+})
+
+document.addEventListener('pjax:send', function () {
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  $(window).off('scroll')
+
+  //reset readmode
+  $('body').hasClass('read-mode') && $('body').removeClass('read-mode')
+
+  //reset font-size
+  $('body').css('font-size') !== originFontSize && $('body').css('font-size', parseFloat(originFontSize))
+})</script></div></body></html>

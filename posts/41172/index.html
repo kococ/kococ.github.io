@@ -1,0 +1,333 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Linux find 命令详解 | 北青永恒</title><meta name="description" content="Linux 上的 find 命令是 findutil 软件包的一部分，一般已经默认集成在了几乎所有的发行版中。 find 命令有非常大的灵活性，可以向其指定丰富的搜索条件（如文件权限、属主、属组…   Linux 上的 find 命令是 findutil 软件包的一部分，一般已经默认集成在了几乎所有的发行版中。find 命令有非常大的灵活性，可以向其指定丰富的搜索条件（如文件权限、属主、属组、文件"><meta name="keywords" content="留下来"><meta name="author" content="Prous"><meta name="copyright" content="Prous"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="https://www.kococ.cn/favicon.ico"><link rel="canonical" href="https://xoxoyun.gitee.io/posts/41172/"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin="crossorigin"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="preconnect" href="//zz.bdstatic.com"/><meta property="og:type" content="article"><meta property="og:title" content="Linux find 命令详解"><meta property="og:url" content="https://xoxoyun.gitee.io/posts/41172/"><meta property="og:site_name" content="北青永恒"><meta property="og:description" content="Linux 上的 find 命令是 findutil 软件包的一部分，一般已经默认集成在了几乎所有的发行版中。 find 命令有非常大的灵活性，可以向其指定丰富的搜索条件（如文件权限、属主、属组…   Linux 上的 find 命令是 findutil 软件包的一部分，一般已经默认集成在了几乎所有的发行版中。find 命令有非常大的灵活性，可以向其指定丰富的搜索条件（如文件权限、属主、属组、文件"><meta property="og:image" content="https://gitee.com/xoxoyun/img/raw/master/image/0058.jpg"><meta property="article:published_time" content="2020-09-29T09:56:20.000Z"><meta property="article:modified_time" content="2020-10-15T12:38:55.435Z"><meta name="twitter:card" content="summary"><script>var activateDarkMode = function () {
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000')
+  }
+}
+var activateLightMode = function () {
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#fff')
+  }
+}
+
+var getCookies = function (name) {
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) return parts.pop().split(';').shift()
+}
+
+var autoChangeMode = 'false'
+var t = getCookies('theme')
+if (autoChangeMode === '1') {
+  var isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+  var isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+  var isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined) {
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport) {
+      console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+      var now = new Date()
+      var hour = now.getHours()
+      var isNight = hour <= 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+      if (Cookies.get('theme') === undefined) {
+        e.matches ? activateDarkMode() : activateLightMode()
+      }
+    })
+  } else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else if (autoChangeMode === '2') {
+  now = new Date()
+  hour = now.getHours()
+  isNight = hour <= 6 || hour >= 18
+  if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else {
+  if (t === 'dark') activateDarkMode()
+  else if (t === 'light') activateLightMode()
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime_unit: '天',
+  runtime: false,
+  copyright: undefined,
+  ClickShowText: undefined,
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: {"bookmark":{"message_prev":"按","message_next":"键将本页加入书签"},"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#121212","position":"bottom-left"},
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  baiduPush: true,
+  highlightCopy: true,
+  highlightLang: true,
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isanchor: false    
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isSidebar: true,
+  postUpdate: '2020-10-15 20:38:55'
+}</script><noscript><style>
+#nav {
+  opacity: 1
+}
+.justified-gallery img {
+  opacity: 1
+}
+</style></noscript><meta name="generator" content="Hexo 5.0.0"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" data-lazy-src="https://www.kococ.cn/wxuser.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">76</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">62</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">7</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友联</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div id="body-wrap"><div id="sidebar"><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">一、简介</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%90%9C%E7%B4%A2%E6%9D%A1%E4%BB%B6%EF%BC%88expression%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">二、搜索条件（expression）</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-%E6%A0%B9%E6%8D%AE%E6%96%87%E4%BB%B6%E5%90%8D%E6%A3%80%E7%B4%A2"><span class="toc-number">2.1.</span> <span class="toc-text">1. 根据文件名检索</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-%E6%A0%B9%E6%8D%AE%E6%96%87%E4%BB%B6%E7%B1%BB%E5%9E%8B%E6%A3%80%E7%B4%A2"><span class="toc-number">2.2.</span> <span class="toc-text">2. 根据文件类型检索</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-%E6%A3%80%E7%B4%A2%E7%A9%BA%E6%96%87%E4%BB%B6"><span class="toc-number">2.3.</span> <span class="toc-text">3. 检索空文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-%E5%8F%8D%E4%B9%89%E5%8C%B9%E9%85%8D"><span class="toc-number">2.4.</span> <span class="toc-text">4. 反义匹配</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#5-%E6%A0%B9%E6%8D%AE%E6%96%87%E4%BB%B6%E7%9A%84%E6%89%80%E5%B1%9E%E6%9D%83%E6%A3%80%E7%B4%A2"><span class="toc-number">2.5.</span> <span class="toc-text">5. 根据文件的所属权检索</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#6-%E6%A0%B9%E6%8D%AE%E6%97%B6%E9%97%B4%E6%97%A5%E6%9C%9F%E8%BF%9B%E8%A1%8C%E6%A3%80%E7%B4%A2"><span class="toc-number">2.6.</span> <span class="toc-text">6. 根据时间日期进行检索</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#7-%E6%A0%B9%E6%8D%AE%E6%96%87%E4%BB%B6%E5%A4%A7%E5%B0%8F%E6%A3%80%E7%B4%A2"><span class="toc-number">2.7.</span> <span class="toc-text">7. 根据文件大小检索</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#8-%E6%A0%B9%E6%8D%AE%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E6%A3%80%E7%B4%A2"><span class="toc-number">2.8.</span> <span class="toc-text">8. 根据文件权限检索</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E7%AC%A6%E5%8F%B7%E5%BD%A2%E5%BC%8F"><span class="toc-number">2.8.1.</span> <span class="toc-text">使用符号形式</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%95%B0%E5%AD%97%E5%BD%A2%E5%BC%8F"><span class="toc-number">2.8.2.</span> <span class="toc-text">使用数字形式</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link" href="#9-%E9%99%90%E5%88%B6%E9%81%8D%E5%8E%86%E7%9A%84%E5%B1%82%E6%95%B0"><span class="toc-number">2.9.</span> <span class="toc-text">9. 限制遍历的层数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#10-%E9%80%BB%E8%BE%91%E7%BB%84%E5%90%88"><span class="toc-number">2.10.</span> <span class="toc-text">10. 逻辑组合</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%AF%B9%E6%90%9C%E7%B4%A2%E7%BB%93%E6%9E%9C%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4"><span class="toc-number">3.</span> <span class="toc-text">三、对搜索结果执行命令</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-%E5%88%A0%E9%99%A4%E6%96%87%E4%BB%B6"><span class="toc-number">3.1.</span> <span class="toc-text">1. 删除文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-%E6%89%A7%E8%A1%8C%E8%87%AA%E5%AE%9A%E4%B9%89%E5%91%BD%E4%BB%A4"><span class="toc-number">3.2.</span> <span class="toc-text">2. 执行自定义命令</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#exec-%E9%80%89%E9%A1%B9%E4%B8%AD%E7%9A%84-%E7%AC%A6%E5%8F%B7"><span class="toc-number">3.2.1.</span> <span class="toc-text">-exec 选项中的 + 符号</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%98%BE%E7%A4%BA%E6%96%87%E4%BB%B6%E4%BF%A1%E6%81%AF"><span class="toc-number">3.2.2.</span> <span class="toc-text">显示文件信息</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E5%B8%B8%E7%94%A8%E5%8F%82%E6%95%B0%E6%B1%87%E6%80%BB"><span class="toc-number">4.</span> <span class="toc-text">四、常用参数汇总</span></a></li></ol></div></div></div><header class="post-bg" id="page-header" style="background-image: url(https://gitee.com/xoxoyun/img/raw/master/image/0058.jpg)"><nav id="nav"><span class="pull-left" id="blog_name"><a class="blog_title" id="site-name" href="/">北青永恒</a></span><span class="pull-right menus"><div id="search_button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友联</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><span class="toggle-menu close"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">Linux find 命令详解</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-09-29T09:56:20.000Z" title="发表于 2020-09-29 17:56:20">2020-09-29</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2020-10-15T12:38:55.435Z" title="更新于 2020-10-15 20:38:55">2020-10-15</time></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>10分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><p>Linux 上的 find 命令是 findutil 软件包的一部分，一般已经默认集成在了几乎所有的发行版中。 find 命令有非常大的灵活性，可以向其指定丰富的搜索条件（如文件权限、属主、属组…</p>
+<!-- more -->
+<blockquote>
+<p>Linux 上的 <code>find</code> 命令是 <code>findutil</code> 软件包的一部分，一般已经默认集成在了几乎所有的发行版中。<br>find 命令有非常大的灵活性，可以向其指定丰富的搜索条件（如<strong>文件权限</strong>、<strong>属主</strong>、<strong>属组</strong>、<strong>文件类型</strong>、<strong>日期</strong>和<strong>大小</strong>等）来定位系统中的文件和目录。<br>此外，find 还支持对搜索到的结果进行多种类型的<strong>命令</strong>操作。</p>
+</blockquote>
+<h4 id="一、简介"><a href="#一、简介" class="headerlink" title="一、简介"></a>一、简介</h4><p>find 命令的基本结构如下：<br><code>find [paths] [expression] [actions]</code></p>
+<p>find 命令接受一个或多个<strong>路径</strong>（_paths_）作为搜索范围，并在该路径下<strong>递归</strong>地搜索。即检索完指定的目录后，还会对该目录下的子目录进行检索，以及子目录下的子目录。。。直到到达目录树底部。</p>
+<p>默认情况下（不带任何搜索条件），find 命令会返回指定目录下的<strong>所有文件</strong>，所以常常需要通过特定的 <code>expression</code> 对结果进行<strong>筛选</strong>。</p>
+<p>find 命令默认的 <code>action</code> 是将所有检索结果打印至标准输出。可以通过自定义 <code>action</code> ，让 find 命令对搜索到的结果执行特定的操作。</p>
+<p>这里先不做详细解释，简单地测试下 find 命令：</p>
+<ol>
+<li>有如下结构的示例目录 directory</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ tree directory</span><br><span class="line">directory</span><br><span class="line">├── file1</span><br><span class="line">├── file2</span><br><span class="line">├── sub-dir1</span><br><span class="line">│   ├── file1</span><br><span class="line">│   ├── file2</span><br><span class="line">│   └── file3</span><br><span class="line">└── sub-dir2</span><br><span class="line">    ├── file2</span><br><span class="line">    └── sub-subdir1</span><br><span class="line">        └── file1</span><br><span class="line"></span><br><span class="line">3 directories, 7 files</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>默认的 find 命令会列出该目录下的所有文件</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ find directory</span><br><span class="line">directory</span><br><span class="line">directory&#x2F;sub-dir1</span><br><span class="line">directory&#x2F;sub-dir1&#x2F;file3</span><br><span class="line">directory&#x2F;sub-dir1&#x2F;file2</span><br><span class="line">directory&#x2F;sub-dir1&#x2F;file1</span><br><span class="line">directory&#x2F;file2</span><br><span class="line">directory&#x2F;sub-dir2</span><br><span class="line">directory&#x2F;sub-dir2&#x2F;file2</span><br><span class="line">directory&#x2F;sub-dir2&#x2F;sub-subdir1</span><br><span class="line">directory&#x2F;sub-dir2&#x2F;sub-subdir1&#x2F;file1</span><br><span class="line">directory&#x2F;file1</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>为 find 命令指定 expression 以筛选出特定的文件</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ find directory -name file2</span><br><span class="line">directory&#x2F;sub-dir1&#x2F;file2</span><br><span class="line">directory&#x2F;file2</span><br><span class="line">directory&#x2F;sub-dir2&#x2F;file2</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>为 find 命令指定特殊的 action（此处 <code>-delete</code> 表示删除搜索结果）</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ find directory -name file2 -delete</span><br><span class="line">$ find directory</span><br><span class="line">directory</span><br><span class="line">directory&#x2F;sub-dir1</span><br><span class="line">directory&#x2F;sub-dir1&#x2F;file3</span><br><span class="line">directory&#x2F;sub-dir1&#x2F;file1</span><br><span class="line">directory&#x2F;sub-dir2</span><br><span class="line">directory&#x2F;sub-dir2&#x2F;sub-subdir1</span><br><span class="line">directory&#x2F;sub-dir2&#x2F;sub-subdir1&#x2F;file1</span><br><span class="line">directory&#x2F;file1</span><br></pre></td></tr></table></figure>
+
+<h4 id="二、搜索条件（expression）"><a href="#二、搜索条件（expression）" class="headerlink" title="二、搜索条件（expression）"></a>二、搜索条件（expression）</h4><h5 id="1-根据文件名检索"><a href="#1-根据文件名检索" class="headerlink" title="1. 根据文件名检索"></a>1. 根据文件名检索</h5><p>find 命令中的 <code>-name</code> 选项可以根据文件名称进行检索（<strong>区分大小写</strong>）。如需要忽略文件名中的大小写，可以使用 <code>-iname</code> 选项。</p>
+<p><code>-name</code> 和 <code>-iname</code> 两个选项都支持 <strong>wildcards</strong> 。如：</p>
+<ul>
+<li><code>?</code> 可以表示任意一个单一的符号</li>
+<li><code>*</code> 可以表示任意数量（包括 0）的未知符号</li>
+</ul>
+<p><code>find /usr -name &#39;*.txt&#39;</code> 查找 /usr 目录下所有文件名以 <code>.txt</code> 结尾的文件<br><code>find /usr -name &#39;????&#39;</code> 查找 /usr 目录下所有文件名刚好为 4 个字符的文件</p>
+<p>有些时候，你需要在搜索时匹配某个文件或目录的<strong>完整路径</strong>，而不仅仅是匹配文件名。可以使用 <code>-path</code> 或 <code>-ipath</code> 选项。</p>
+<p>如查找 /usr 下所有文件名以 <code>.txt</code> 结尾的文件或目录，且该文件的父目录必须是 <code>src</code>。可以使用以下命令：<br><code>find /usr -path &#39;*/src/*.txt&#39;</code></p>
+<h5 id="2-根据文件类型检索"><a href="#2-根据文件类型检索" class="headerlink" title="2. 根据文件类型检索"></a>2. 根据文件类型检索</h5><p>如果只想搜索得到文件<strong>或</strong>目录，即不想它们同时出现在结果中。可以使用 <code>-type</code> 选项指定文件类型。</p>
+<p><code>-type</code> 选项最常用的参数如下：</p>
+<ul>
+<li>f: 文件</li>
+<li>d: 目录</li>
+<li>l: 符号链接</li>
+</ul>
+<p><code>find /usr -type d -name &#39;python*&#39;</code> 检索 /usr 下所有文件名以 <code>python</code> 开头的<strong>目录</strong></p>
+<h5 id="3-检索空文件"><a href="#3-检索空文件" class="headerlink" title="3. 检索空文件"></a>3. 检索空文件</h5><p>find 命令支持 <code>-empty</code> 选项用来检索<strong>为空</strong>的文件或目录。空文件即文件里没有任何内容，空目录即目录中没有任何文件或子目录。</p>
+<p><code>find ~ -type d -empty</code> 检索用户主目录下所有的空目录</p>
+<h5 id="4-反义匹配"><a href="#4-反义匹配" class="headerlink" title="4. 反义匹配"></a>4. 反义匹配</h5><p>find 命令也允许用户对当前的匹配条件进行<strong>“反义”</strong>（类似于<strong>逻辑非</strong>操作）。</p>
+<p>如需要检索 /usr 下所有文件名<strong>不</strong>以 <code>.txt</code> 为后缀的文件。可以使用以下命令：<br><code>find /usr -type f ! -name &#39;*.txt&#39;</code></p>
+<p>也可以“翻转”任何其他的筛选条件，如：<br><code>find /usr -type f ! -empty</code> 检索 /usr 下所有内容不为空的文件</p>
+<h5 id="5-根据文件的所属权检索"><a href="#5-根据文件的所属权检索" class="headerlink" title="5. 根据文件的所属权检索"></a>5. 根据文件的所属权检索</h5><p>为了检索归属于特定用户的文件或目录，可以使用 <code>-user</code> 选项。</p>
+<p><code>find / -type f -user starky</code> 检索根目录下所有属主为 starky 的文件</p>
+<p>类似于 <code>-user</code>选项，<code>-group</code> 选项则可以根据文件或目录的<strong>属组</strong>进行检索。</p>
+<h5 id="6-根据时间日期进行检索"><a href="#6-根据时间日期进行检索" class="headerlink" title="6. 根据时间日期进行检索"></a>6. 根据时间日期进行检索</h5><p>有些时候，需要根据文件创建或修改的时间进行检索。</p>
+<p>Linux 系统中，与文件相关联的时间参数有以下三种：</p>
+<ul>
+<li>修改时间（Modification time）：最后一次文件内容有过更改的时间点</li>
+<li>访问时间（Access time）：最后一次文件有被读取过的时间点</li>
+<li>变更时间（Change time）：最后一次文件有被<strong>变更</strong>过的时间点（如内容被修改，或权限等 metadata 被修改）</li>
+</ul>
+<p>与此对应的是 find 命令中的 <code>-mtime</code>，<code>-atime</code> 和 <code>-ctime</code> 三个选项。</p>
+<p>这三个选项的使用遵循以下示例中的规则：</p>
+<ul>
+<li><code>-mtime 2</code>：该文件 2 天前被修改过</li>
+<li><code>-mtime -2</code>：该文件 2 天<strong>以内</strong>被修改过</li>
+<li><code>-mtime +2</code>：该文件距离上次修改已经<strong>超过</strong> 2 天时间</li>
+</ul>
+<p><code>find /usr -type f -mtime 2</code> 检索 /usr 下两天前被修改过的文件</p>
+<p>如果觉得 <code>-mtime</code> 等选项以<strong>天</strong>为单位时间有点长，还可以使用 <code>-mmin</code>，<code>-amin</code>，<code>-cmin</code> 三个选项：<br><code>find /usr -type f -mtime +50 -mtime -100</code> 检索 /usr 下 50 到 100 天之前修改过的文件<br><code>find /usr -type f -mtime 2 -amin 5</code> 检索 /usr 下两天前被修改过且 5 分钟前又读取过的文件</p>
+<h5 id="7-根据文件大小检索"><a href="#7-根据文件大小检索" class="headerlink" title="7. 根据文件大小检索"></a>7. 根据文件大小检索</h5><p><code>-size</code> 选项允许用户通过文件大小进行搜索（只适用于文件，目录没有大小……）。</p>
+<p>表示文件大小的单位由以下字符组成：</p>
+<ul>
+<li><code>c</code>：字节</li>
+<li><code>k</code>：Kb</li>
+<li><code>M</code>：Mb</li>
+<li><code>G</code>：Gb</li>
+</ul>
+<p>另外，还可以使用 <code>+</code> 或 <code>-</code> 符号表示<strong>大于</strong>或<strong>小于</strong>当前条件。</p>
+<p><code>find / -size +1G</code> 检索文件大小高于 1 GB 的文件</p>
+<h5 id="8-根据文件权限检索"><a href="#8-根据文件权限检索" class="headerlink" title="8. 根据文件权限检索"></a>8. 根据文件权限检索</h5><p>find 命令可以使用 <code>-perm</code> 选项以文件权限为依据进行搜索。</p>
+<h6 id="使用符号形式"><a href="#使用符号形式" class="headerlink" title="使用符号形式"></a>使用符号形式</h6><p>如需要检索 /usr 目录下权限为 <code>rwxr-xr-x</code> 的文件，可以使用以下命令：<br><code>find /usr -perm u=rwx,g=rx,o=rx</code></p>
+<p>搜索 /usr 目录下所有权限为 <code>r-xr-xr-x</code>（即系统中的所有用户都只有读写权限）的文件和目录，可以使用以下命令：<br><code>find /usr -perm a=rx</code></p>
+<p>很多时候，我们只想匹配文件权限的一个<strong>子集</strong>。比如，检索可以直接被任何用户执行的文件，即只关心文件的执行权限，而不用管其读写权限是什么。</p>
+<p>上述的需求可以通过以下命令实现：<code>find / -type f -perm /a=x</code><br>其中 <code>a=x</code> 前面的 <code>/</code> 符号即用来表示只匹配权限的某个子集（执行权限），而不用关心其他权限的具体设置。</p>
+<h6 id="使用数字形式"><a href="#使用数字形式" class="headerlink" title="使用数字形式"></a>使用数字形式</h6><p><code>-perm</code> 选项也支持数字形式的文件权限标记。</p>
+<p><code>find /usr -perm 644</code> 搜索 /usr 目录下权限为 <strong>644</strong>（即 <code>rwxr-xr-x</code>）的文件</p>
+<h5 id="9-限制遍历的层数"><a href="#9-限制遍历的层数" class="headerlink" title="9. 限制遍历的层数"></a>9. 限制遍历的层数</h5><p>find 命令默认是以<strong>递归</strong>的方式检索项目的，这有时候会导致得到的结果数量非常巨大。可以使用 <code>-maxdepth</code> 限制 find 命令递归的层数。</p>
+<p><code>find / -maxdepth 3</code> 搜索时向下递归的层数最大为 3</p>
+<h5 id="10-逻辑组合"><a href="#10-逻辑组合" class="headerlink" title="10. 逻辑组合"></a>10. 逻辑组合</h5><p>在之前的例子中有出现多个搜索条件的<strong>组合</strong>以及对某个搜索条件的<strong>反转</strong>。<br>实际上 find 命令支持 <strong>“and”</strong> 和 <strong>“or”</strong> 两种逻辑运算，对应的命令选项分别是 <code>-a</code> 和 <code>-o</code>。通过这两个选项可以对搜索条件进行更复杂的组合。</p>
+<p>此外还可以使用<strong>小括号</strong>对搜索条件进行<strong>分组</strong>。注意 <code>find</code> 命令中的小括号常需要用<strong>单引号</strong>包裹起来。因小括号在 Shell 中有特殊的含义。</p>
+<p>如检索 /usr 下文件名以 <code>python</code> 开头且类型为目录的文件<br><code>find /usr -type d -name &#39;python*&#39;</code></p>
+<p>该命令等同于：<br><code>find /usr -type d -a -name &#39;python*&#39;</code></p>
+<p>更复杂的组合形式如：<br><code>find / &#39;(&#39; -mmin -5 -o -mtime +50 &#39;)&#39; -a -type f</code></p>
+<h4 id="三、对搜索结果执行命令"><a href="#三、对搜索结果执行命令" class="headerlink" title="三、对搜索结果执行命令"></a>三、对搜索结果执行命令</h4><h5 id="1-删除文件"><a href="#1-删除文件" class="headerlink" title="1. 删除文件"></a>1. 删除文件</h5><p><code>-delete</code> 选项可以用来删除搜索到的文件和目录。</p>
+<p>如删除 home 目录下所有的空目录：<br><code>find ~ -type d -empty -delete</code></p>
+<h5 id="2-执行自定义命令"><a href="#2-执行自定义命令" class="headerlink" title="2. 执行自定义命令"></a>2. 执行自定义命令</h5><p><code>-exec</code> 选项可以对搜索到的结果执行特定的命令。</p>
+<p>如需要将 home 目录下所有的 MP3 音频文件复制到移动存储设备（假设路径是 <code>/media/MyDrive</code>），可使用下面的命令：<br><code>find ~ -type f -name &#39;*.mp3&#39; -exec cp &#123;&#125; /media/MyDrive &#39;;&#39;</code></p>
+<p>其中的<strong>大括号</strong>（<code>&#123;&#125;</code>）作为检索到的文件的 <strong>占位符</strong> ，而分号（ <code>;</code>）作为命令结束的标志。因为分号是 Shell 中有特殊含义的符号，所以需要使用单引号括起来。<br>每当 find 命令检索到一个符合条件的文件，会使用其完整路径取代命令中的 <code>&#123;&#125;</code>，然后执行 <code>-exec</code> 后面的命令一次。</p>
+<p>另一个很重要的用法是，在多个文件中检索某个指定的字符串。<br>如在用户主目录下的所有文件中检索字符串 <code>hello</code> ，可以使用如下命令：<br><code>find ~ -type f -exec grep -l hello &#123;&#125; &#39;;&#39;</code></p>
+<h6 id="exec-选项中的-符号"><a href="#exec-选项中的-符号" class="headerlink" title="-exec 选项中的 + 符号"></a>-exec 选项中的 + 符号</h6><p>创建 Gzip 格式的压缩文件的命令为：<code>tar -czvf filename.tar.gz &lt;list of files&gt;</code></p>
+<p>现在假设需要将用户主目录下所有的 MP3 文件添加到压缩包 <code>music.tar.gz</code> 中，直观的感觉是，其命令应为如下形式：<br><code>find ~ -type f -name &#39;*.mp3&#39; -exec tar -czvf music.tar.gz &#123;&#125; &#39;;&#39;</code></p>
+<p>实际情况是，这样得到的 <code>music.tar.gz</code> 其实只包含一个 MP3 文件。<br>原因是 find 命令<strong>每次</strong>发现一个音频文件，都会再执行一次 <code>-exec</code> 选项后面的压缩命令。导致先前生成的压缩包被覆盖。</p>
+<p>可以先让 find 命令检索出所有符合条件的音频文件，再将得到的<strong>文件列表</strong>传递给后面的压缩命令。完整的命令如下：<br><code>find ~ -type f -name &#39;*.mp3&#39; -exec tar -czvf music.tar.gz &#123;&#125; +</code></p>
+<h6 id="显示文件信息"><a href="#显示文件信息" class="headerlink" title="显示文件信息"></a>显示文件信息</h6><p>如果想浏览搜索到的文件（目录）的详细信息（如权限和大小等），可以直接使用 <code>-ls</code> 选项。</p>
+<p><code>find / -type file -size +1G -ls</code> 浏览所有 1G 以上大小的文件的详细信息</p>
+<h4 id="四、常用参数汇总"><a href="#四、常用参数汇总" class="headerlink" title="四、常用参数汇总"></a>四、常用参数汇总</h4><p>参数</p>
+<p>解析</p>
+<p>-atime <em>n[smhdw]</em></p>
+<p>距离文件上次被访问时的时间间隔</p>
+<p>-ctime <em>n[smhdw]</em></p>
+<p>距离文件创建时的时间间隔</p>
+<p>-delete</p>
+<p>删除检索到的文件</p>
+<p>-depth <em>n</em></p>
+<p>检索深度为 n 的文件，即位于指定目录以下 n 层的文件</p>
+<p>-empty</p>
+<p>检索空文件或空目录</p>
+<p>-fstype <em>type</em></p>
+<p>指定文件所在的文件系统的类型</p>
+<p>-group <em>gname</em></p>
+<p>指定文件的属组</p>
+<p>-iname <em>pattern</em></p>
+<p>同 <code>-name</code>，忽略大小写</p>
+<p>-ipath <em>pattern</em></p>
+<p>同 <code>-path</code>，忽略大小写</p>
+<p>-ls</p>
+<p>打印搜索到的文件的详细信息</p>
+<p>-maxdepth <em>n</em></p>
+<p>指定递归的最大层数为 n</p>
+<p>-mtime <em>n[smhdw]</em></p>
+<p>距离文件上次发生变更时的时间间隔</p>
+<p>-name <em>pattern</em></p>
+<p>搜索时使用 <code>pattern</code> 对文件名进行匹配</p>
+<p>-path <em>pattern</em></p>
+<p>搜索时使用 <code>pattern</code> 对文件路径进行匹配</p>
+<p>-perm <em>mode</em></p>
+<p>根据文件权限搜索</p>
+<p>-size <em>n[ckMGTP]</em></p>
+<p>根据文件大小搜索</p>
+<p>-type <em>t</em></p>
+<p>根据文件类型搜索</p>
+<p>-user <em>uname</em></p>
+<p>指定文件的属主</p>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined" rel="external nofollow noreferrer">Prous</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://xoxoyun.gitee.io/posts/41172/">https://xoxoyun.gitee.io/posts/41172/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://xoxoyun.gitee.io" target="_blank">北青永恒</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://gitee.com/xoxoyun/img/raw/master/image/0058.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/41171/"><img class="prev-cover" data-lazy-src="https://gitee.com/xoxoyun/img/raw/master/image/0198.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Linux find 命令详解</div></div></a></div><div class="next-post pull-right"><a href="/posts/45181/"><img class="next-cover" data-lazy-src="https://gitee.com/xoxoyun/img/raw/master/image/0098.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">kubernetes生态--交付prometheus监控及grafana炫酷dashboard到k8s集群</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></article></main><footer id="footer" style="background-image: url(https://gitee.com/xoxoyun/img/raw/master/image/0058.jpg)" data-type="photo"><div id="footer-wrap"><div class="copyright">&copy;2018 - 2020 By Prous</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">既来之 则安之</div><div class="icp"><a target="_blank" rel="noopener external nofollow noreferrer" href="http://beian.miit.gov.cn/"><img class="icp-icon" src="/img/icp.png"/><span>豫ICP备20001100号</span></a></div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="font_plus" type="button" title="放大字体"><i class="fas fa-plus"></i></button><button id="font_minus" type="button" title="缩小字体"><i class="fas fa-minus"></i></button><button id="translateLink" type="button" title="简繁转换">簡</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="chat_btn" type="button" title="rightside.chat_btn"><i class="fas fa-sms"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a>
+ <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module" defer></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js" async></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    window.valine = new Valine({
+      el: '#vcomment',
+      appId: '',
+      appKey: '',
+      placeholder: 'Please leave your footprints',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'en',
+      recordIP: false,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: false,
+      path: window.location.pathname,
+    });
+    if ('nick,mail') { valine.config.requiredFields= 'nick,mail'.split(',') }
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else $.getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js', initValine)
+}
+
+if ('Valine' === 'Valine' || !true) {
+  if (true) loadComment(document.querySelector('#vcomment'),loadValine)
+  else setTimeout(() => loadValine(), 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><div class="aplayer no-destroy" data-id="712292593" data-server="netease" data-type="artist" data-fixed="true" data-mini="true" data-listFolded="true" data-order="random" data-preload="none" data-autoplay="true" muted></div><script src="https://cdn.jsdelivr.net/gh/xiabo2/CDN@latest/fishes.js"></script><canvas class="fireworks"></canvas><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="/js/third-party/fireworks.js"></script><script defer="defer" id="ribbon" src="/js/third-party/canvas-ribbon.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="true"></script><script src="/js/third-party/activate-power-mode.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+document.body.addEventListener('input', POWERMODE);
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/gh/metowolf/MetingJS@1.2/dist/Meting.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: [
+    'title',
+    'meta[name=description]',
+    '#config_change',
+    '#body-wrap',
+    '#rightside-config-hide',
+    '#rightside-config-show',
+    '.js-pjax'
+  ],
+  cacheBust: false,
+})
+
+document.addEventListener('pjax:complete', function () {
+  refreshFn()
+
+  $('script[data-pjax]').each(function () {
+    $(this).parent().append($(this).remove())
+  })
+
+  GLOBAL_CONFIG.islazyload && lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  if (typeof gtag === 'function') {
+    gtag('config', '', {'page_path': window.location.pathname});
+  }
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+})
+
+document.addEventListener('pjax:send', function () {
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  $(window).off('scroll')
+
+  //reset readmode
+  $('body').hasClass('read-mode') && $('body').removeClass('read-mode')
+
+  //reset font-size
+  $('body').css('font-size') !== originFontSize && $('body').css('font-size', parseFloat(originFontSize))
+})</script></div></body></html>
