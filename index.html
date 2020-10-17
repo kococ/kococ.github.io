@@ -1,0 +1,280 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>北青小站</title><meta name="keywords" content="留下来"><meta name="author" content="Prous"><meta name="copyright" content="Prous"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="留下来">
+<meta property="og:type" content="website">
+<meta property="og:title" content="北青小站">
+<meta property="og:url" content="https://kococ.cn/index.html">
+<meta property="og:site_name" content="北青小站">
+<meta property="og:description" content="留下来">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://kococ.cn/null">
+<meta property="article:author" content="Prous">
+<meta property="article:tag" content="留下来">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kococ.cn/null"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://kococ.cn/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  hexoversion: '5.0.0',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  ClickShowText: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: false,
+  isHome: true,
+  isHighlightShrink: false,
+  isSidebar: false,
+  postUpdate: '2020-10-17 17:53:13'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {
+  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }
+})()</script><meta name="generator" content="Hexo 5.0.0"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/null" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">77</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">63</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">7</div></a></div></div></div><hr/></div></div><div id="body-wrap"><header class="full_page" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">北青小站</a></span><span id="menus"><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="site-info"><h1 id="site-title">北青小站</h1><div id="site-subtitle"><span id="subtitle"></span></div></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout_page" id="content-inner"><div class="recent-posts" id="recent-posts"><div class="recent-post-item"><div class="post_cover left_radius"><a href="/posts/27785/" title="音乐测试">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="音乐测试"></a></div><div class="recent-post-info"><a class="article-title" href="/posts/27785/" title="音乐测试">音乐测试</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-10-17T08:20:01.000Z" title="发表于 2020-10-17 16:20:01">2020-10-17</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/%E6%9D%82%E8%B0%88/">杂谈</a></span></div><div class="content">
+
+
+
+测试音乐
+</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/posts/39737/" title="Jenkins汉化并修改插件源为国内源">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Jenkins汉化并修改插件源为国内源"></a></div><div class="recent-post-info"><a class="article-title" href="/posts/39737/" title="Jenkins汉化并修改插件源为国内源">Jenkins汉化并修改插件源为国内源</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-10-14T01:17:00.000Z" title="发表于 2020-10-14 09:17:00">2020-10-14</time></span></div><div class="content">jenkins插件安装更换为国内源1.在jenkins登陆后进入“系统管理”-“插件管理”-“高级”中，设置升级站点2.设置升级站点为如下地址：https://mirrors.tuna.tsin…
+
+jenkins插件安装更换为国内源1.在jenkins登陆后进入“系统管理”-“插件管理”-“高级”中，设置升级站点
+
+2.设置升级站点为如下地址：
+https://mirrors.tuna.tsinghua.edu.cn/jenkins/updates/update-center.json
+3.提交
+4.在后台服务器中找到jenkins的安装路径下的update配置文件
+路径/var/lib/jenkins/updates
+找到default.json文件
+替换updates.jenkins-ci.org/download为mirrors.tuna.tsinghua.edu.cn/jenkins
+替换 www.google.com为www.baidu.com
+
+5.重启jenkins服务service jenkins restart,重新登录，速度飞快
+Jenkins汉化一、安装插件
+主 ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/posts/20924/" title="ELK+Redis+Grafana监控分析Nginx生产日志终极版">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ELK+Redis+Grafana监控分析Nginx生产日志终极版"></a></div><div class="recent-post-info"><a class="article-title" href="/posts/20924/" title="ELK+Redis+Grafana监控分析Nginx生产日志终极版">ELK+Redis+Grafana监控分析Nginx生产日志终极版</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-10-13T05:23:17.000Z" title="发表于 2020-10-13 13:23:17">2020-10-13</time></span></div><div class="content">先上架构图Nginx 会将我们定义的logformat写入/var/log/nginx/accessjson.log文件，Filebeat会将其作为输入项。Filebeat会将数据输出到Redi…
+
+先上架构图
+
+Nginx 会将我们定义的log_format写入/var/log/nginx/access_json.log文件，Filebeat会将其作为输入项。
+Filebeat会将数据输出到Redis
+Logstash作为Redis数据的过滤将数据存储Elasticsearch
+Grafana读取Elasticsearch数据源
+
+简单介绍下Grafana
+grafana 是一款采用 go 语言编写的开源应用，主要用于大规模指标数据的可视化展现，是网络架构和应用分析中最流行的时序数据展示工具，目前已经支持绝大部分常用的时序数据库,官网（http://docs.grafana.org/）.
+
+监控指标针对入口Nginx，我设计了如下的监控指标：
+
+最近的24小时内访问量Top10的国家
+最近24小时最受欢迎的页面
+200状态码和404状态码的比例
+最受欢迎的世界题图展示
+等等
+
+开始部 ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/posts/10899/" title="CentOS 7安装配置Shadowsocks客户端">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CentOS 7安装配置Shadowsocks客户端"></a></div><div class="recent-post-info"><a class="article-title" href="/posts/10899/" title="CentOS 7安装配置Shadowsocks客户端">CentOS 7安装配置Shadowsocks客户端</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-10-13T00:47:46.000Z" title="发表于 2020-10-13 08:47:46">2020-10-13</time></span></div><div class="content">1.安装配置Shadowsocks客户端1.1安装Shadowsocks客户端安装epel扩展源采用 Python包管理工pip安装。sudo yum -y install epel-rele…
+
+1.安装配置Shadowsocks客户端1.1安装Shadowsocks客户端
+安装epel扩展源采用Python包管理工pip安装。
+
+
+sudo yum -y install epel-release
+sudo yum -y install python-pip
+
+
+安装Shadowsocks客户端
+
+
+sudo pip install shadowsocks
+
+1.2配置Shadowsocks客户端
+新建配置文件
+
+
+sudo mkdir /etc/shadowsocks
+sudo vi /etc/shadowsocks/shadowsocks.json
+
+
+添加配置信息
+
+
+&#123;
+&quot;server&quot;:&quot;1.1.1.1&quot;,
+&quot;server_port&quot;:1035,
+&quot;local_address&quot;: &q ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/posts/41172/" title="Linux find 命令详解">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Linux find 命令详解"></a></div><div class="recent-post-info"><a class="article-title" href="/posts/41172/" title="Linux find 命令详解">Linux find 命令详解</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-09-29T09:56:20.000Z" title="发表于 2020-09-29 17:56:20">2020-09-29</time></span></div><div class="content">Linux 上的 find 命令是 findutil 软件包的一部分，一般已经默认集成在了几乎所有的发行版中。 find 命令有非常大的灵活性，可以向其指定丰富的搜索条件（如文件权限、属主、属组…
+
+
+Linux 上的 find 命令是 findutil 软件包的一部分，一般已经默认集成在了几乎所有的发行版中。find 命令有非常大的灵活性，可以向其指定丰富的搜索条件（如文件权限、属主、属组、文件类型、日期和大小等）来定位系统中的文件和目录。此外，find 还支持对搜索到的结果进行多种类型的命令操作。
+
+一、简介find 命令的基本结构如下：find [paths] [expression] [actions]
+find 命令接受一个或多个路径（_paths_）作为搜索范围，并在该路径下递归地搜索。即检索完指定的目录后，还会对该目录下的子目录进行检索，以及子目录下的子目录。。。直到到达目录树底部。
+默认情况下（不带任何搜索条件），find 命令会返回指定目录下的所有文件，所以常常需要通过特定的 expression 对结果进行筛选。
+find 命令默认的 action 是将所有检索结果 ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/posts/45181/" title="kubernetes生态--交付prometheus监控及grafana炫酷dashboard到k8s集群">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="kubernetes生态--交付prometheus监控及grafana炫酷dashboard到k8s集群"></a></div><div class="recent-post-info"><a class="article-title" href="/posts/45181/" title="kubernetes生态--交付prometheus监控及grafana炫酷dashboard到k8s集群">kubernetes生态--交付prometheus监控及grafana炫酷dashboard到k8s集群</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-09-25T02:12:58.000Z" title="发表于 2020-09-25 10:12:58">2020-09-25</time></span></div><div class="content">kubernetes生态–交付prometheus监控及grafana炫酷dashboard到k8s集群由于docker容器的特殊性，传统的zabbix无法对k8s集群内的docker状态进行…
+
+kubernetes生态–交付prometheus监控及grafana炫酷dashboard到k8s集群由于docker容器的特殊性，传统的zabbix无法对k8s集群内的docker状态进行监控，所以需要使用prometheus来进行监控：
+什么是Prometheus?Prometheus是由SoundCloud开发的开源监控报警系统和时序列数据库(TSDB)。Prometheus使用Go语言开发，是Google BorgMon监控系统的开源版本。2016年由Google发起Linux基金会旗下的原生云基金会(Cloud Native Computing Foundation), 将Prometheus纳入其下第二大开源项目。Prometheus目前在开源社区相当活跃。Prometheus和Heapster(Heapster是K8S的一个子项目，用于获取集群的性能数据。)相比功能更完善、更 ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/posts/40025/" title="kubernetes实战-配置中心（四）分环境使用apollo配置中心">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="kubernetes实战-配置中心（四）分环境使用apollo配置中心"></a></div><div class="recent-post-info"><a class="article-title" href="/posts/40025/" title="kubernetes实战-配置中心（四）分环境使用apollo配置中心">kubernetes实战-配置中心（四）分环境使用apollo配置中心</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-09-25T02:12:41.000Z" title="发表于 2020-09-25 10:12:41">2020-09-25</time></span></div><div class="content">kubernetes实战-配置中心（四）分环境使用apollo配置中心要进行分环境，需要将现有实验环境进行拆分portal服务，可以各个环境共用，但是apollo-adminservice和ap…
+
+kubernetes实战-配置中心（四）分环境使用apollo配置中心要进行分环境，需要将现有实验环境进行拆分
+portal服务，可以各个环境共用，但是apollo-adminservice和apollo-configservice必须要分开。
+1、zk环境拆分为test和prod环境
+添加dns解析：
+1# vi &#x2F;var&#x2F;named&#x2F;od.com.zone
+
+zk-test.od.com A 10.4.7.11
+zk-prod.od.com A 10.4.7.12
+
+2、namespace 分环境，创建test 和prod
+12# kubectl create ns test# kubectl create ns prod
+
+创建secret：
+123# kubectl create secret docker-registry harbor --dock ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/posts/1427/" title="kubernetes实战-配置中心（三）配置服务使用apollo配置中心">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="kubernetes实战-配置中心（三）配置服务使用apollo配置中心"></a></div><div class="recent-post-info"><a class="article-title" href="/posts/1427/" title="kubernetes实战-配置中心（三）配置服务使用apollo配置中心">kubernetes实战-配置中心（三）配置服务使用apollo配置中心</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-09-25T02:10:48.000Z" title="发表于 2020-09-25 10:10:48">2020-09-25</time></span></div><div class="content">kubernetes实战-配置中心（三）配置服务使用apollo配置中心使用配置中心，需要开发对代码进行调整，将一些配置，通过变量的形式配置到apollo中，服务通过配置中心来获取具体的配置在配…
+
+kubernetes实战-配置中心（三）配置服务使用apollo配置中心使用配置中心，需要开发对代码进行调整，将一些配置，通过变量的形式配置到apollo中，服务通过配置中心来获取具体的配置
+在配置中心修改新增如下配置：
+项目信息：
+
+配置：
+
+重新打包镜像，使用apollo版本的代码：
+
+修改dp.yaml，将镜像使用我们刚刚打包的这个：
+
+应用资源配置清单：
+1# kubectl apply -f http:&#x2F;&#x2F;k8s-yaml.od.com&#x2F;dubbo-server&#x2F;dp.yaml
+
+创建dubbo服务消费者：
+apollo中新建一个项目：dubbo-demo-web,新建配置dubbo.registry,值为zookeeper地址
+
+使用jenkins重新打包构建一版镜像： &#x67;&#x69;&#x74;&#x40;&#103;&#x6 ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/posts/43827/" title="kubernetes实战-配置中心（二）交付apollo配置中心到k8s">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="kubernetes实战-配置中心（二）交付apollo配置中心到k8s"></a></div><div class="recent-post-info"><a class="article-title" href="/posts/43827/" title="kubernetes实战-配置中心（二）交付apollo配置中心到k8s">kubernetes实战-配置中心（二）交付apollo配置中心到k8s</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-09-25T02:10:31.000Z" title="发表于 2020-09-25 10:10:31">2020-09-25</time></span></div><div class="content">kubernetes实战-配置中心（二）交付apollo配置中心到k8sapollo官网：官方地址apollo架构图：apollo需要使用数据库，这里使用mysql，注意版本需要在5.6以上：本…
+
+kubernetes实战-配置中心（二）交付apollo配置中心到k8sapollo官网：官方地址
+apollo架构图：
+
+apollo需要使用数据库，这里使用mysql，注意版本需要在5.6以上：
+本次环境mysql部署在10.4.7.11上，使用mariadb：10.1以上版本
+123456# vi &#x2F;etc&#x2F;yum.repos.d&#x2F;MariaDB.repo[mariadb]name &#x3D; MariaDBbaseurl &#x3D; https:&#x2F;&#x2F;mirrors.ustc.edu.cn&#x2F;mariadb&#x2F;yum&#x2F;10.1&#x2F;centos7-amd64&#x2F;gpgkey&#x3D;https:&#x2F;&#x2F;mirrors.ustc.edu.cn&#x2F;mariadb&#x2 ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/posts/19840/" title="kubernetes实战-配置中心（一）configmap资源">     <img class="post_bg" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="kubernetes实战-配置中心（一）configmap资源"></a></div><div class="recent-post-info"><a class="article-title" href="/posts/19840/" title="kubernetes实战-配置中心（一）configmap资源">kubernetes实战-配置中心（一）configmap资源</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-09-25T02:08:40.000Z" title="发表于 2020-09-25 10:08:40">2020-09-25</time></span></div><div class="content">kubernetes实战-配置中心（一）configmap资源在我们的环境中测试使用configmap资源，需要先对我们的环境进行一些准备，首先将dubbo服务调整为0个pod ，然后把zook…
+
+kubernetes实战-配置中心（一）configmap资源在我们的环境中测试使用configmap资源，需要先对我们的环境进行一些准备，首先将dubbo服务调整为0个pod ，然后把zookeeper进行拆分：
+
+
+拆分zk环境，模拟测试环境跟生产环境：
+
+停止zookeeper：
+1234# sh &#x2F;opt&#x2F;zookeeper&#x2F;bin&#x2F;zkServer.sh stop# rm -rf &#x2F;data&#x2F;zookeeper&#x2F;data&#x2F;*# rm -rf &#x2F;data&#x2F;zookeeper&#x2F;logs&#x2F;*# vi &#x2F;opt&#x2F;zookeeper&#x2F;conf&#x2F;zoo.cfg
+
+注释掉集群配置：
+
+启动zookeeper：
+1# sh &#x2F;o ...</div></div></div><nav id="pagination"><div class="pagination"><span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/2/"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside_content" id="aside_content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><img class="avatar-img" src="/null" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Prous</div><div class="author-info__description">留下来</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length_num">77</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length_num">63</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length_num">7</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div></div><div class="sticky_layout"><div class="card-widget card-announcement"><div class="card-content"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div></div><div class="card-widget card-recent-post"><div class="card-content"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/27785/" title="音乐测试"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="音乐测试"/></a><div class="content"><a class="title" href="/posts/27785/" title="音乐测试">音乐测试</a><time datetime="2020-10-17T08:20:01.000Z" title="发表于 2020-10-17 16:20:01">2020-10-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/39737/" title="Jenkins汉化并修改插件源为国内源"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Jenkins汉化并修改插件源为国内源"/></a><div class="content"><a class="title" href="/posts/39737/" title="Jenkins汉化并修改插件源为国内源">Jenkins汉化并修改插件源为国内源</a><time datetime="2020-10-14T01:17:00.000Z" title="发表于 2020-10-14 09:17:00">2020-10-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/20924/" title="ELK+Redis+Grafana监控分析Nginx生产日志终极版"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ELK+Redis+Grafana监控分析Nginx生产日志终极版"/></a><div class="content"><a class="title" href="/posts/20924/" title="ELK+Redis+Grafana监控分析Nginx生产日志终极版">ELK+Redis+Grafana监控分析Nginx生产日志终极版</a><time datetime="2020-10-13T05:23:17.000Z" title="发表于 2020-10-13 13:23:17">2020-10-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/10899/" title="CentOS 7安装配置Shadowsocks客户端"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CentOS 7安装配置Shadowsocks客户端"/></a><div class="content"><a class="title" href="/posts/10899/" title="CentOS 7安装配置Shadowsocks客户端">CentOS 7安装配置Shadowsocks客户端</a><time datetime="2020-10-13T00:47:46.000Z" title="发表于 2020-10-13 08:47:46">2020-10-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/41172/" title="Linux find 命令详解"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Linux find 命令详解"/></a><div class="content"><a class="title" href="/posts/41172/" title="Linux find 命令详解">Linux find 命令详解</a><time datetime="2020-09-29T09:56:20.000Z" title="发表于 2020-09-29 17:56:20">2020-09-29</time></div></div></div></div></div><div class="card-widget card-categories"><div class="card-content"><div class="item-headline"><i class="fas fa-folder-open"></i><span>分类</span></div><ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Docker-K8s/"><span class="card-category-list-name">Docker+K8s</span><span class="card-category-list-count">9</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Linux%E5%9F%BA%E7%A1%80/"><span class="card-category-list-name">Linux基础</span><span class="card-category-list-count">29</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/MySQL%E8%BF%9B%E9%98%B6/"><span class="card-category-list-name">MySQL进阶</span><span class="card-category-list-count">15</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/"><span class="card-category-list-name">云计算</span><span class="card-category-list-count">16</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E6%9D%82%E8%B0%88/"><span class="card-category-list-name">杂谈</span><span class="card-category-list-count">12</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E7%9B%91%E6%8E%A7/"><span class="card-category-list-name">监控</span><span class="card-category-list-count">4</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E8%87%AA%E5%8A%A8%E5%8C%96/"><span class="card-category-list-name">自动化</span><span class="card-category-list-count">3</span></a></li>
+            
+            </ul></div></div><div class="card-widget card-tags"><div class="card-content"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/Amoeba/" style="font-size: 1.1em; color: #999">Amoeba</a> <a href="/tags/Ansible/" style="font-size: 1.1em; color: #999">Ansible</a> <a href="/tags/Apache/" style="font-size: 1.1em; color: #999">Apache</a> <a href="/tags/DHCP/" style="font-size: 1.1em; color: #999">DHCP</a> <a href="/tags/Dockerfile/" style="font-size: 1.1em; color: #999">Dockerfile</a> <a href="/tags/FTP/" style="font-size: 1.1em; color: #999">FTP</a> <a href="/tags/GFS/" style="font-size: 1.1em; color: #999">GFS</a> <a href="/tags/GIT%E5%91%BD%E4%BB%A4/" style="font-size: 1.1em; color: #999">GIT命令</a> <a href="/tags/GiThub/" style="font-size: 1.1em; color: #999">GiThub</a> <a href="/tags/Gitlab-Jenkins/" style="font-size: 1.1em; color: #999">Gitlab+Jenkins</a> <a href="/tags/HTTP%E5%8D%8F%E8%AE%AE/" style="font-size: 1.1em; color: #999">HTTP协议</a> <a href="/tags/IMAGE/" style="font-size: 1.1em; color: #999">IMAGE</a> <a href="/tags/IPtables/" style="font-size: 1.1em; color: #999">IPtables</a> <a href="/tags/K8s/" style="font-size: 1.1em; color: #999">K8s</a> <a href="/tags/KMS/" style="font-size: 1.1em; color: #999">KMS</a> <a href="/tags/Kubernetes/" style="font-size: 1.1em; color: #999">Kubernetes</a> <a href="/tags/LAMP/" style="font-size: 1.1em; color: #999">LAMP</a> <a href="/tags/LNMP/" style="font-size: 1.1em; color: #999">LNMP</a> <a href="/tags/Linux%E5%88%9D%E5%A7%8B%E5%8C%96%E7%8E%AF%E5%A2%83/" style="font-size: 1.1em; color: #999">Linux初始化环境</a> <a href="/tags/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" style="font-size: 1.1em; color: #999">Mysql主从复制</a> <a href="/tags/NFS/" style="font-size: 1.1em; color: #999">NFS</a> <a href="/tags/Nginx%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/" style="font-size: 1.1em; color: #999">Nginx反向代理</a> <a href="/tags/Nginx%E5%B8%B8%E7%94%A8%E6%A8%A1%E5%9D%97/" style="font-size: 1.1em; color: #999">Nginx常用模块</a> <a href="/tags/Nginx%E6%9C%8D%E5%8A%A1/" style="font-size: 1.1em; color: #999">Nginx服务</a> <a href="/tags/PXE/" style="font-size: 1.1em; color: #999">PXE</a> <a href="/tags/Redis/" style="font-size: 1.1em; color: #999">Redis</a> <a href="/tags/Rsync%E5%A4%87%E4%BB%BD/" style="font-size: 1.1em; color: #999">Rsync备份</a> <a href="/tags/SSH/" style="font-size: 1.1em; color: #999">SSH</a> <a href="/tags/Sersync-lsync-%E5%AE%9E%E6%97%B6%E5%90%8C%E6%AD%A5/" style="font-size: 1.1em; color: #999">Sersync/lsync 实时同步</a> <a href="/tags/Tomcat/" style="font-size: 1.1em; color: #999">Tomcat</a> <a href="/tags/Web%E6%9C%8D%E5%8A%A1/" style="font-size: 1.1em; color: #999">Web服务</a> <a href="/tags/Zabbix/" style="font-size: 1.1em; color: #999">Zabbix</a> <a href="/tags/aliyun/" style="font-size: 1.1em; color: #999">aliyun</a> <a href="/tags/docker/" style="font-size: 1.1em; color: #999">docker</a> <a href="/tags/docker%E5%91%BD%E4%BB%A4/" style="font-size: 1.1em; color: #999">docker命令</a> <a href="/tags/docker%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/" style="font-size: 1.1em; color: #999">docker网络模型</a> <a href="/tags/haproxy/" style="font-size: 1.1em; color: #999">haproxy</a> <a href="/tags/k8s/" style="font-size: 1.1em; color: #999">k8s</a> <a href="/tags/kickstart/" style="font-size: 1.1em; color: #999">kickstart</a> <a href="/tags/linux/" style="font-size: 1.1em; color: #999">linux</a></div></div></div><div class="card-widget card-archives"><div class="card-content"><div class="item-headline"><i class="fas fa-archive"></i><span>归档</span></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2020/10/"><span class="card-archive-list-date">十月 2020</span><span class="card-archive-list-count">4</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2020/09/"><span class="card-archive-list-date">九月 2020</span><span class="card-archive-list-count">7</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2020/08/"><span class="card-archive-list-date">八月 2020</span><span class="card-archive-list-count">2</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2020/07/"><span class="card-archive-list-date">七月 2020</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2020/03/"><span class="card-archive-list-date">三月 2020</span><span class="card-archive-list-count">3</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2020/02/"><span class="card-archive-list-date">二月 2020</span><span class="card-archive-list-count">2</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2020/01/"><span class="card-archive-list-date">一月 2020</span><span class="card-archive-list-count">17</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2019/12/"><span class="card-archive-list-date">十二月 2019</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item more is-center"><a class="card-archive-list-link-more" href="/archives/">
+              <span>查看更多</span><i class="fas fa-angle-right"  ></i></a></li></ul></div></div><div class="card-widget card-webinfo"><div class="card-content"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站资讯</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">77</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"></div></div><div class="webinfo-item"><div class="item-name">本站总访问量 :</div><div class="item-count" id="busuanzi_value_site_pv"></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2020-10-17T09:53:13.234Z"></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 By Prous</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></section><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>

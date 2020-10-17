@@ -1,0 +1,205 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>各大搜索引擎 User-Agent | 北青小站</title><meta name="keywords" content="留下来"><meta name="author" content="Prous"><meta name="copyright" content="Prous"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="由于项目需求，所以搜集了各大搜索引擎的蜘蛛 User-Agent，做了个统计  百度搜索 User-Agent：百度 PC UA 12Mozilla&#x2F;5.0 (compatible; Baiduspider&#x2F;2.0; +http:&#x2F;&#x2F;www.baidu.com&#x2F;search&#x2F;spider.html)Mozilla&#x2F;5.0 (c">
+<meta property="og:type" content="article">
+<meta property="og:title" content="各大搜索引擎 User-Agent">
+<meta property="og:url" content="https://kococ.cn/posts/41490/index.html">
+<meta property="og:site_name" content="北青小站">
+<meta property="og:description" content="由于项目需求，所以搜集了各大搜索引擎的蜘蛛 User-Agent，做了个统计  百度搜索 User-Agent：百度 PC UA 12Mozilla&#x2F;5.0 (compatible; Baiduspider&#x2F;2.0; +http:&#x2F;&#x2F;www.baidu.com&#x2F;search&#x2F;spider.html)Mozilla&#x2F;5.0 (c">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/kococ/IMAGE/1.jpg">
+<meta property="article:published_time" content="2019-11-11T11:41:00.000Z">
+<meta property="article:modified_time" content="2020-10-16T12:49:12.657Z">
+<meta property="article:author" content="Prous">
+<meta property="article:tag" content="留下来">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/kococ/IMAGE/1.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://kococ.cn/posts/41490/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  hexoversion: '5.0.0',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  ClickShowText: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isSidebar: true,
+  postUpdate: '2020-10-16 20:49:12'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {
+  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }
+})()</script><meta name="generator" content="Hexo 5.0.0"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/null" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">77</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">63</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">7</div></a></div></div></div><hr/></div></div><div id="body-wrap"><div id="sidebar"><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%99%BE%E5%BA%A6%E6%90%9C%E7%B4%A2-User-Agent%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">百度搜索 User-Agent：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A5%9E%E9%A9%AC%E6%90%9C%E7%B4%A2-User-Agent%EF%BC%9A"><span class="toc-number">2.</span> <span class="toc-text">神马搜索 User-Agent：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%B7%E6%AD%8C-User-Agent%EF%BC%9A"><span class="toc-number">3.</span> <span class="toc-text">谷歌 User-Agent：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%90%9C%E7%8B%97-User-Agent%EF%BC%9A"><span class="toc-number">4.</span> <span class="toc-text">搜狗 User-Agent：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#360-%E6%90%9C%E7%B4%A2-User-Agent%EF%BC%9A"><span class="toc-number">5.</span> <span class="toc-text">360 搜索 User-Agent：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BF%85%E5%BA%94-User-Agent%EF%BC%9A"><span class="toc-number">6.</span> <span class="toc-text">必应 User-Agent：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%90%9C%E6%90%9C-User-Agent%EF%BC%9A"><span class="toc-number">7.</span> <span class="toc-text">搜搜 User-Agent：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9B%85%E8%99%8E-User-Agent%EF%BC%9A"><span class="toc-number">8.</span> <span class="toc-text">雅虎 User-Agent：</span></a></li></ol></div></div></div><header class="post-bg" id="page-header" style="background-image: url(https://cdn.jsdelivr.net/gh/kococ/IMAGE/1.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">北青小站</a></span><span id="menus"><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">各大搜索引擎 User-Agent</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2019-11-11T11:41:00.000Z" title="发表于 2019-11-11 19:41:00">2019-11-11</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2020-10-16T12:49:12.657Z" title="更新于 2020-10-16 20:49:12">2020-10-16</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Linux%E5%9F%BA%E7%A1%80/">Linux基础</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%9D%82%E8%B0%88/">杂谈</a></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><blockquote>
+<p>由于项目需求，所以搜集了各大搜索引擎的蜘蛛 User-Agent，做了个统计</p>
+</blockquote>
+<h2 id="百度搜索-User-Agent："><a href="#百度搜索-User-Agent：" class="headerlink" title="百度搜索 User-Agent："></a>百度搜索 User-Agent：</h2><p>百度 PC UA</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Mozilla&#x2F;5.0 (compatible; Baiduspider&#x2F;2.0; +http:&#x2F;&#x2F;www.baidu.com&#x2F;search&#x2F;spider.html)</span><br><span class="line">Mozilla&#x2F;5.0 (compatible; Baiduspider-render&#x2F;2.0; +http:&#x2F;&#x2F;www.baidu.com&#x2F;search&#x2F;spider.html)</span><br></pre></td></tr></table></figure>
+
+<p>百度移动 UA</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Mozilla&#x2F;5.0 (Linux;u;Android 4.2.2;zh-cn;) AppleWebKit&#x2F;534.46 (KHTML,like Gecko) Version&#x2F;5.1 Mobile Safari&#x2F;10600.6.3 (compatible; Baiduspider&#x2F;2.0; +http:&#x2F;&#x2F;www.baidu.com&#x2F;search&#x2F;spider.html)</span><br><span class="line">Mozilla&#x2F;5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit&#x2F;601.1.46 (KHTML, like Gecko) Version&#x2F;9.0 Mobile&#x2F;13B143 Safari&#x2F;601.1 (compatible; Baiduspider-render&#x2F;2.0; +http:&#x2F;&#x2F;www.baidu.com&#x2F;search&#x2F;spider.html)</span><br></pre></td></tr></table></figure>
+
+<p>百度图片 UA</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Baiduspider-image+(+http:&#x2F;&#x2F;www.baidu.com&#x2F;search&#x2F;spider.htm)</span><br></pre></td></tr></table></figure>
+
+<h2 id="神马搜索-User-Agent："><a href="#神马搜索-User-Agent：" class="headerlink" title="神马搜索 User-Agent："></a>神马搜索 User-Agent：</h2><p>神马搜索 PC UA</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Mozilla&#x2F;5.0 (Windows NT 6.1; Win64; x64) AppleWebKit&#x2F;537.36 (KHTML, like Gecko) Chrome&#x2F;69.0.3497.81 YisouSpider&#x2F;5.0 Safari&#x2F;537.36</span><br></pre></td></tr></table></figure>
+
+<p>神马搜索移动 UA</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Mozilla&#x2F;5.0 (iPhone; CPU iPhone OS 10_3 like Mac OS X) AppleWebKit&#x2F;602.1.50 (KHTML, like Gecko) CriOS&#x2F;56.0.2924.75 Mobile&#x2F;14E5239e YisouSpider&#x2F;5.0 Safari&#x2F;602.1</span><br></pre></td></tr></table></figure>
+
+<h2 id="谷歌-User-Agent："><a href="#谷歌-User-Agent：" class="headerlink" title="谷歌 User-Agent："></a>谷歌 User-Agent：</h2><p>谷歌 PC UA</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Mozilla&#x2F;5.0 (compatible; Googlebot&#x2F;2.1; +http:&#x2F;&#x2F;www.google.com&#x2F;bot.html)</span><br></pre></td></tr></table></figure>
+
+<p>谷歌移动 UA</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AdsBot-Google-Mobile (+http:&#x2F;&#x2F;www.google.com&#x2F;mobile&#x2F;adsbot.html) Mozilla (iPhone; U; CPU iPhone OS 3 0 like Mac OS X) AppleWebKit (KHTML, like Gecko) Mobile Safari</span><br></pre></td></tr></table></figure>
+
+<p>谷歌图片 UA</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Mozilla&#x2F;5.0 (compatible; Googlebot-Image&#x2F;1.0; +http:&#x2F;&#x2F;www.google.com&#x2F;bot.html)</span><br></pre></td></tr></table></figure>
+
+<h2 id="搜狗-User-Agent："><a href="#搜狗-User-Agent：" class="headerlink" title="搜狗 User-Agent："></a>搜狗 User-Agent：</h2><p>搜索 PC UA</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Sogou web spider&#x2F;4.0(+http:&#x2F;&#x2F;www.sogou.com&#x2F;docs&#x2F;help&#x2F;webmasters.htm#07)</span><br></pre></td></tr></table></figure>
+
+<p>搜狗图片 UA</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Sogou Pic Spider&#x2F;3.0(+http:&#x2F;&#x2F;www.sogou.com&#x2F;docs&#x2F;help&#x2F;webmasters.htm#07)</span><br></pre></td></tr></table></figure>
+
+<p>搜狗新闻 UA</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Sogou News Spider&#x2F;4.0(+http:&#x2F;&#x2F;www.sogou.com&#x2F;docs&#x2F;help&#x2F;webmasters.htm#07)</span><br></pre></td></tr></table></figure>
+
+<p>搜狗视频 UA</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Sogou Video Spider&#x2F;3.0(+http:&#x2F;&#x2F;www.sogou.com&#x2F;docs&#x2F;help&#x2F;webmasters.htm#07)</span><br></pre></td></tr></table></figure>
+
+<h2 id="360-搜索-User-Agent："><a href="#360-搜索-User-Agent：" class="headerlink" title="360 搜索 User-Agent："></a>360 搜索 User-Agent：</h2><p>360 搜索 UA</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Mozilla&#x2F;5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident&#x2F;5.0);</span><br></pre></td></tr></table></figure>
+
+<p>360 移动 UA</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Mozilla&#x2F;5.0 (Linux; U; Android 4.0.2; en-us; Galaxy Nexus Build&#x2F;ICL53F) AppleWebKit&#x2F;534.30 (KHTML, like Gecko)Version&#x2F;4.0 Mobile Safari&#x2F;534.30; 360Spider</span><br><span class="line">Mozilla&#x2F;5.0 (Linux; U; Android 4.0.2; en-us; Galaxy Nexus Build&#x2F;ICL53F) AppleWebKit&#x2F;534.30 (KHTML, like Gecko) Version&#x2F;4.0 Mobile Safari&#x2F;534.30; HaosouSpider</span><br></pre></td></tr></table></figure>
+
+<p>360 安全 UA</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">360spider (http:&#x2F;&#x2F;webscan.360.cn)</span><br></pre></td></tr></table></figure>
+
+<h2 id="必应-User-Agent："><a href="#必应-User-Agent：" class="headerlink" title="必应 User-Agent："></a>必应 User-Agent：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Mozilla&#x2F;5.0 (compatible; bingbot&#x2F;2.0; +http:&#x2F;&#x2F;www.bing.com&#x2F;bingbot.htm)</span><br></pre></td></tr></table></figure>
+
+<h2 id="搜搜-User-Agent："><a href="#搜搜-User-Agent：" class="headerlink" title="搜搜 User-Agent："></a>搜搜 User-Agent：</h2><p>搜搜 UA：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Sosospider+(+http:&#x2F;&#x2F;help.soso.com&#x2F;webspider.htm)</span><br></pre></td></tr></table></figure>
+
+<p>搜搜图片 UA：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Sosoimagespider+(+http:&#x2F;&#x2F;help.soso.com&#x2F;soso-image-spider.htm)</span><br></pre></td></tr></table></figure>
+
+<h2 id="雅虎-User-Agent："><a href="#雅虎-User-Agent：" class="headerlink" title="雅虎 User-Agent："></a>雅虎 User-Agent：</h2><p>雅虎中文 UA：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Mozilla&#x2F;5.0 (compatible; Yahoo! Slurp China; http:&#x2F;&#x2F;misc.yahoo.com.cn&#x2F;help.html)</span><br></pre></td></tr></table></figure>
+
+<p>雅虎英文 UA：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Mozilla&#x2F;5.0 (compatible; Yahoo! Slurp; http:&#x2F;&#x2F;help.yahoo.com&#x2F;help&#x2F;us&#x2F;ysearch&#x2F;slurp)</span><br></pre></td></tr></table></figure></div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined" rel="external nofollow noreferrer">Prous</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://kococ.cn/posts/41490/">https://kococ.cn/posts/41490/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://kococ.cn" target="_blank">北青小站</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/kococ/IMAGE/1.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/33788/"><img class="prev-cover" src="https://cdn.jsdelivr.net/gh/kococ/IMAGE/28.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">kubernetes进阶（一） kubectl工具使用详解</div></div></a></div><div class="next-post pull-right"><a href="/posts/14584/"><img class="next-cover" src="https://cdn.jsdelivr.net/gh/kococ/IMAGE/35.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">LVS,Nginx , HAProxy 的工作原理</div></div></a></div></nav></article></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 By Prous</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></section><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>
