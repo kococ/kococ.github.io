@@ -1,0 +1,302 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>linux 性能、统计、分析、优化，常用的命令 | 北青永恒</title><meta name="keywords" content="基础命令"><meta name="author" content="Thaons"><meta name="copyright" content="Thaons"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="uptime显示当前时间、系统已经运行多长时间，当前有多少用户登录，过去一段时间平均负载 12[root@Email ~]# uptime  14:03:56 up 48 days, 15:25,  1 user,  load average: 0.16, 0.42, 0.25  ps仅显示nginx进程可以输入 ps -C nginx 1234[root@Email ~]# ps -C ngin">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux 性能、统计、分析、优化，常用的命令">
+<meta property="og:url" content="https://kococ.cn/posts/6935/index.html">
+<meta property="og:site_name" content="北青永恒">
+<meta property="og:description" content="uptime显示当前时间、系统已经运行多长时间，当前有多少用户登录，过去一段时间平均负载 12[root@Email ~]# uptime  14:03:56 up 48 days, 15:25,  1 user,  load average: 0.16, 0.42, 0.25  ps仅显示nginx进程可以输入 ps -C nginx 1234[root@Email ~]# ps -C ngin">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/xoxoyun/img/raw/master/image/0140.jpg">
+<meta property="article:published_time" content="2020-08-27T08:26:08.000Z">
+<meta property="article:modified_time" content="2020-10-16T07:56:45.000Z">
+<meta property="article:author" content="Thaons">
+<meta property="article:tag" content="基础命令">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/xoxoyun/img/raw/master/image/0140.jpg"><link rel="shortcut icon" href="https://www.kococ.cn/favicon.ico"><link rel="canonical" href="https://kococ.cn/posts/6935/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin="crossorigin"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="preconnect" href="//zz.bdstatic.com"/><meta name="yandex-verification" content="{&quot;theme_color&quot;:{&quot;enable&quot;:true,&quot;main&quot;:&quot;#49B1F5&quot;,&quot;paginator&quot;:&quot;#00c4b6&quot;,&quot;button_hover&quot;:&quot;#FF7242&quot;,&quot;text_selection&quot;:&quot;#00c4b6&quot;,&quot;link_color&quot;:&quot;#99a9bf&quot;,&quot;meta_color&quot;:&quot;#858585&quot;,&quot;hr_color&quot;:&quot;#A4D8FA&quot;,&quot;code_foreground&quot;:&quot;#F47466&quot;,&quot;code_background&quot;:&quot;rgba(27, 31, 35, .05)&quot;,&quot;toc_color&quot;:&quot;#00c4b6&quot;,&quot;blockquote_padding_color&quot;:&quot;#49b1f5&quot;,&quot;blockquote_background_color&quot;:&quot;#49b1f5&quot;}}"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  hexoversion: '5.0.0',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  ClickShowText: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isSidebar: true,
+  postUpdate: '2020-10-16 15:56:45'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {
+  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }
+})()</script><link rel="stylesheet" href="/css/footer.css"><meta name="generator" content="Hexo 5.0.0"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="https://gitee.com/xoxoyun/img/raw/master/image/wxuser.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">70</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">74</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">10</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" target="_blank" rel="noopener external nofollow noreferrer" href="https://music.kococ.cn"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page" target="_blank" rel="noopener external nofollow noreferrer" href="http://www.2020web.cn"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友联</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div id="body-wrap"><div id="sidebar"><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#uptime"><span class="toc-number">1.</span> <span class="toc-text">uptime</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ps"><span class="toc-number">2.</span> <span class="toc-text">ps</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pstree"><span class="toc-number">3.</span> <span class="toc-text">pstree</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#free"><span class="toc-number">4.</span> <span class="toc-text">free</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mpstat"><span class="toc-number">5.</span> <span class="toc-text">mpstat</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vmstat"><span class="toc-number">6.</span> <span class="toc-text">vmstat</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ss"><span class="toc-number">7.</span> <span class="toc-text">ss</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sar"><span class="toc-number">8.</span> <span class="toc-text">sar</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#numastat"><span class="toc-number">9.</span> <span class="toc-text">numastat</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pmap"><span class="toc-number">10.</span> <span class="toc-text">pmap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#tcpdump-%E5%92%8C-wireshark"><span class="toc-number">11.</span> <span class="toc-text">tcpdump 和 wireshark</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#tcpdump"><span class="toc-number">12.</span> <span class="toc-text">tcpdump</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#wireshark"><span class="toc-number">13.</span> <span class="toc-text">wireshark</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#strace"><span class="toc-number">14.</span> <span class="toc-text">strace</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ltrace"><span class="toc-number">15.</span> <span class="toc-text">ltrace</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gnuplot"><span class="toc-number">16.</span> <span class="toc-text">gnuplot</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E4%B8%80"><span class="toc-number">16.1.</span> <span class="toc-text">示例一</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E4%BA%8C"><span class="toc-number">16.2.</span> <span class="toc-text">示例二</span></a></li></ol></li></ol></div></div></div><header class="post-bg" id="page-header" style="background-image: url(https://gitee.com/xoxoyun/img/raw/master/image/0140.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">北青永恒</a></span><span id="menus"><div id="search_button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" target="_blank" rel="noopener external nofollow noreferrer" href="https://music.kococ.cn"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page" target="_blank" rel="noopener external nofollow noreferrer" href="http://www.2020web.cn"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友联</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">linux 性能、统计、分析、优化，常用的命令</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-08-27T08:26:08.000Z" title="发表于 2020-08-27 16:26:08">2020-08-27</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2020-10-16T07:56:45.000Z" title="更新于 2020-10-16 15:56:45">2020-10-16</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Linux%E5%9F%BA%E7%A1%80/">Linux基础</a></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>15分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><h3 id="uptime"><a href="#uptime" class="headerlink" title="uptime"></a>uptime</h3><p>显示当前时间、系统已经运行多长时间，当前有多少用户登录，过去一段时间平均负载</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# uptime </span><br><span class="line"> 14:03:56 up 48 days, 15:25,  1 user,  load average: 0.16, 0.42, 0.25</span><br></pre></td></tr></table></figure>
+
+<h3 id="ps"><a href="#ps" class="headerlink" title="ps"></a>ps</h3><p>仅显示nginx进程可以输入 ps -C nginx</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# ps -C nginx</span><br><span class="line">  PID TTY          TIME CMD</span><br><span class="line">23549 ?        00:00:00 nginx</span><br><span class="line">23550 ?        00:00:00 nginx</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>仅显示nginx进程ID，可以输入 ps -C nginx -o pid（必须小写）=</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# ps -C nginx -o pid&#x3D;</span><br><span class="line">23549</span><br><span class="line">23550</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>查看线程信息， ps -L PID</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# ps -C nginx -o pid&#x3D;</span><br><span class="line">23549</span><br><span class="line">23550</span><br></pre></td></tr></table></figure>
+
+<h3 id="pstree"><a href="#pstree" class="headerlink" title="pstree"></a>pstree</h3><p>以树形结构显示运行的进程，部署软件时可以看到具体运行的哪一步，哪一个命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# pstree -p</span><br><span class="line">systemd(1)─┬─AliYunDun(9334)─┬─&#123;AliYunDun&#125;(9335)</span><br><span class="line">           │                 ├─&#123;AliYunDun&#125;(9336)</span><br><span class="line">           │                 ├─&#123;AliYunDun&#125;(9352)</span><br><span class="line">           │                 ├─&#123;AliYunDun&#125;(9353)</span><br><span class="line">           ├─AliYunDunUpdate(8252)─┬─&#123;AliYunDunUpdate&#125;(8253)</span><br><span class="line">           │                       ├─&#123;AliYunDunUpdate&#125;(8254)</span><br><span class="line">           │                       └─&#123;AliYunDunUpdate&#125;(8256)</span><br></pre></td></tr></table></figure>
+
+<h3 id="free"><a href="#free" class="headerlink" title="free"></a>free</h3><p>显示内存区域中使用了多少内存 free -ml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# free -ml</span><br><span class="line">              total        used        free      shared  buff&#x2F;cache   available</span><br><span class="line">Mem:           1839         416         353          96        1069        1124</span><br><span class="line">Low:           1839        1485         353</span><br><span class="line">High:             0           0           0</span><br><span class="line">Swap:             0           0           0</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>查看 /proc/buddyinfo 还可以确定每个区域内有多少内存块可用，每一列的数量意味着可用的分页数量</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# cat &#x2F;proc&#x2F;buddyinfo </span><br><span class="line">Node 0, zone      DMA     27     15     15     10      5      2      3      3      0      2      0 </span><br><span class="line">Node 0, zone    DMA32     25    636   1349   1147    896    587    338    141      0      0      0 </span><br></pre></td></tr></table></figure>
+
+<h3 id="mpstat"><a href="#mpstat" class="headerlink" title="mpstat"></a>mpstat</h3><p>显示在多处理器服务器上每个可用CPU的相关统计信息，从CPU0开始。还会报告所有CPU的全局平均活动，mpstat工具是sysstat软件包的一部分</p>
+<p>每隔1s采集一次数据，共采集4次： mpstat 1（interval） 4（count）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# mpstat 1 4</span><br><span class="line">Linux 3.10.0-514.26.2.el7.x86_64 (Email)     04&#x2F;15&#x2F;2020  _x86_64_    (1 CPU)</span><br><span class="line"></span><br><span class="line">02:26:25 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle</span><br><span class="line">02:26:26 PM  all    0.99    0.00    0.99    0.00    0.00    0.00    0.00    0.00    0.00   98.02</span><br><span class="line">02:26:27 PM  all    1.01    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   98.99</span><br><span class="line">02:26:28 PM  all    1.00    0.00    1.00    0.00    0.00    0.00    0.00    0.00    0.00   98.00</span><br><span class="line">02:26:29 PM  all    0.00    0.00    1.00    0.00    0.00    0.00    0.00    0.00    0.00   99.00</span><br><span class="line">Average:     all    0.75    0.00    0.75    0.00    0.00    0.00    0.00    0.00    0.00   98.50</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>对于多处理器可以加 -P 选择CPU，如选择CPU0，mpstat -P 0 1 4</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# mpstat -P 0 1 4</span><br><span class="line">Linux 3.10.0-514.26.2.el7.x86_64 (Email)     04&#x2F;15&#x2F;2020  _x86_64_    (1 CPU)</span><br><span class="line"></span><br><span class="line">02:29:08 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle</span><br><span class="line">02:29:09 PM    0    0.00    0.00    1.01    0.00    0.00    0.00    0.00    0.00    0.00   98.99</span><br><span class="line">02:29:10 PM    0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00</span><br><span class="line">02:29:11 PM    0    1.01    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   98.99</span><br><span class="line">02:29:12 PM    0    0.99    0.00    0.99    0.00    0.00    0.00    0.00    0.00    0.00   98.02</span><br><span class="line">Average:       0    0.50    0.00    0.50    0.00    0.00    0.00    0.00    0.00    0.00   98.99</span><br></pre></td></tr></table></figure>
+
+<h3 id="vmstat"><a href="#vmstat" class="headerlink" title="vmstat"></a>vmstat</h3><p>用来报告关于进程，内存，分页，块IO，中断，CPU活动信息<br>vmstat 1(每隔1s输出)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# vmstat 1</span><br><span class="line">procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----</span><br><span class="line"> r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st</span><br><span class="line"> 2  0      0 360320 109288 990168    0    0  4535    58    7    6  3  1 93  3  0</span><br><span class="line"> 0  0      0 360180 109288 990200    0    0     0     0  375 1065  1  0 99  0  0</span><br><span class="line"> 0  0      0 360180 109288 990200    0    0     0     0  326  994  1  1 98  0  0</span><br><span class="line"> 0  0      0 360180 109288 990200    0    0     0     0  334 1014  1  0 99  0  0</span><br><span class="line"> 0  0      0 360180 109288 990200    0    0     0     0  338 1018  0  1 99  0  0</span><br><span class="line"> 0  0      0 360180 109288 990200    0    0     0     0  330 1002  1  0 99  0  0</span><br><span class="line"> 0  0      0 360180 109296 990196    0    0     0    20  374 1072  1  1 97  1  0</span><br><span class="line"> 0  0      0 360180 109296 990204    0    0     0     0  343 1017  0  0 100  0  0</span><br><span class="line"> 0  0      0 360180 109296 990204    0    0     0     0  346 1030  1  1 98  0  0</span><br><span class="line">...........</span><br></pre></td></tr></table></figure>
+
+<p>第一行产生的报告是自上次重启之后的平均值</p>
+<blockquote>
+<p>以磁盘模式输出 vmstat -d 1 1</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# vmstat -d 1 1</span><br><span class="line">disk- ------------reads------------ ------------writes----------- -----IO------</span><br><span class="line">       total merged sectors      ms  total merged sectors      ms    cur    sec</span><br><span class="line">vda   245180755 290549 37927585746 2125938376 5820122 5747763 482611704 66760652      0 133137</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>以分区模式输出 vmstat -p /dev/sda1 1 10</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# vmstat -p &#x2F;dev&#x2F;vda1 1 4</span><br><span class="line">vda1          reads   read sectors  writes    requested writes</span><br><span class="line">           245180653 37927582522    5738051  482612272</span><br><span class="line">           245180653 37927582522    5738051  482612272</span><br><span class="line">           245180653 37927582522    5738051  482612272</span><br><span class="line">           245180653 37927582522    5738051  482612272</span><br></pre></td></tr></table></figure>
+
+<h3 id="ss"><a href="#ss" class="headerlink" title="ss"></a>ss</h3><p>显示所有 TCP socket ：ss -t -a</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# ss -t -a</span><br><span class="line">State       Recv-Q Send-Q                   Local Address:Port                                    Peer Address:Port                </span><br><span class="line">LISTEN      0      50                                   *:mysql                                              *:*                    </span><br><span class="line">LISTEN      0      511                                  *:http                                               *:*                    </span><br><span class="line">LISTEN      0      128                                  *:ssh                                                *:*                    </span><br><span class="line">LISTEN      0      1024                         127.0.0.1:socks                                              *:*                    </span><br><span class="line">LISTEN      0      1                            127.0.0.1:mxi                                                *:*  </span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>显示所有 UDP socket ： ss -u -a</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">State       Recv-Q Send-Q                   Local Address:Port                                    Peer Address:Port                </span><br><span class="line">UNCONN      0      0                            127.0.0.1:socks                                              *:*                    </span><br><span class="line">UNCONN      0      0                                    *:bootpc                                             *:*                    </span><br><span class="line">UNCONN      0      0                         172.24.54.44:ntp                                                *:*                    </span><br><span class="line">UNCONN      0      0                            127.0.0.1:ntp                                                *:*                    </span><br><span class="line">UNCONN      0      0                                    *:ntp                                                *:*      </span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>显示已经建立的ssh连接</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# ss -o state established sport &#x3D; :22</span><br><span class="line">Netid Recv-Q Send-Q                      Local Address:Port                                       Peer Address:Port                </span><br><span class="line">tcp   0      248                          172.24.54.44:ssh                                       88.91.42.228:5552                  timer:(on,197ms,0)</span><br></pre></td></tr></table></figure>
+
+<h3 id="sar"><a href="#sar" class="headerlink" title="sar"></a>sar</h3><p>用来收集、报告、保存系统活动信息，sysstat包的一部分<br>一般来说，系统已经默认为我们准备好了自动化作业 /etc/cron.d/sysstat</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# cat &#x2F;etc&#x2F;cron.d&#x2F;sysstat </span><br><span class="line"># Run system activity accounting tool every 10 minutes</span><br><span class="line">*&#x2F;10 * * * * root &#x2F;usr&#x2F;lib64&#x2F;sa&#x2F;sa1 1 1</span><br><span class="line"># 0 * * * * root &#x2F;usr&#x2F;lib64&#x2F;sa&#x2F;sa1 600 6 &amp;</span><br><span class="line"># Generate a daily summary of process accounting at 23:53</span><br><span class="line">53 23 * * * root &#x2F;usr&#x2F;lib64&#x2F;sa&#x2F;sa2 -A</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>提取15号的磁盘信息</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root@Email ~]# sar -f &#x2F;var&#x2F;log&#x2F;sa&#x2F;sa15 （saX X为统计时的日期） -d</span><br></pre></td></tr></table></figure>
+
+<p>sar命令作用很多，可以参考其他博客</p>
+<h3 id="numastat"><a href="#numastat" class="headerlink" title="numastat"></a>numastat</h3><p>为进程和操作系统显示每个NUMA节点的内存统计信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# numastat </span><br><span class="line">                           node0</span><br><span class="line">numa_hit              8549224367</span><br><span class="line">numa_miss                      0</span><br><span class="line">numa_foreign                   0</span><br><span class="line">interleave_hit             14087</span><br><span class="line">local_node            8549224367</span><br><span class="line">other_node                     0</span><br></pre></td></tr></table></figure>
+
+<h3 id="pmap"><a href="#pmap" class="headerlink" title="pmap"></a>pmap</h3><p>用来报告一个进程或多个进程的内存映射，可以使用这个工具确定系统是如何为服务器上的进程分配内存的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# ps -C nginx</span><br><span class="line">  PID TTY          TIME CMD</span><br><span class="line">23549 ?        00:00:00 nginx</span><br><span class="line">23550 ?        00:00:00 nginx</span><br><span class="line"></span><br><span class="line">[root@Email ~] # pmap -d 23549 23549:   nginx: master process &#x2F;usr&#x2F;sbin&#x2F;nginx Address           Kbytes Mode  Offset           Device    Mapping 00007f7989c1f000      20 r-x-- 0000000000000000 0fd:00001 nginx.so 00007f7989c24000    2048 ----- 0000000000005000 0fd:00001 nginx.so 00007f7989e26000     152 r-x-- 0000000000000000 0fd:00001 ngx_stream_module.so 00007f7989e4c000    2044 ----- 0000000000026000 0fd:00001 ngx_stream_module.so 00007f798a04b000       4 r---- 0000000000025000 0fd:00001 ngx_stream_module.so ...... 00007ffde65e7000       8 r-x-- 0000000000000000 000:00000   [ anon ] ffffffffff600000       4 r-x-- 0000000000000000 000:00000   [ anon ] mapped: 120900K    writeable&#x2F;private: 2448K    shared: 4K </span><br></pre></td></tr></table></figure>
+
+<h3 id="tcpdump-和-wireshark"><a href="#tcpdump-和-wireshark" class="headerlink" title="tcpdump 和 wireshark"></a>tcpdump 和 wireshark</h3><p>用来捕捉和分析流量的两个工具，在linux下使用libpcap库可以捕获数据包</p>
+<h3 id="tcpdump"><a href="#tcpdump" class="headerlink" title="tcpdump"></a>tcpdump</h3><p>捕获http数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# tcpdump -i eth0 -nn port 80</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv for full protocol decode</span><br><span class="line">listening on eth0, link-type EN10MB (Ethernet), capture size 65535 bytes</span><br><span class="line">15:13:17.463903 IP 132.24.54.44.34584 &gt; 100.100.30.26.80: Flags [P.], seq 1188473272:1188474570, ack 2089985175, win 2494, length 1298</span><br><span class="line">15:13:17.488506 IP 110.100.30.26.80 &gt; 172.24.54.44.34584: Flags [.], ack 1298, win 24567, length 0</span><br><span class="line">15:13:18.389400 IP 132.24.54.44.34584 &gt; 100.100.30.26.80: Flags [P.], seq 1298:1948, ack 1, win 2494, length 650</span><br><span class="line">15:13:18.413997 IP 120.100.30.26.80 &gt; 172.234.54.44.34584: Flags [.], ack 1948, win 24571, length 0</span><br><span class="line">.....</span><br><span class="line">62 packets captured</span><br><span class="line">62 packets received by filter</span><br><span class="line">0 packets dropped by kernel</span><br></pre></td></tr></table></figure>
+
+<p>如果没有 -c 选项 tcpdump 将持续捕捉数据包，直到SIGINT或SIGTERM（kill）信号来中断他</p>
+<blockquote>
+<p>显示在eth0接口所捕获到的相关 192.168.1.100的icmp数据包</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# tcpdump -i eth0 -nn -icmp and host 192.168.1.100</span><br></pre></td></tr></table></figure>
+
+<h3 id="wireshark"><a href="#wireshark" class="headerlink" title="wireshark"></a>wireshark</h3><p>图形化工具</p>
+<h3 id="strace"><a href="#strace" class="headerlink" title="strace"></a>strace</h3><p>用来追踪系统调用和信号，可以很方便的诊断和解决出现的问题<br>跟踪 cat 命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# strace cat &#x2F;tmp&#x2F;file </span><br><span class="line">execve(&quot;&#x2F;usr&#x2F;bin&#x2F;cat&quot;, [&quot;cat&quot;, &quot;&#x2F;tmp&#x2F;file&quot;], [&#x2F;* 23 vars *&#x2F;]) &#x3D; 0</span><br><span class="line">brk(0)                                  &#x3D; 0x190f000</span><br><span class="line">mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) &#x3D; 0x7fbd2732f000</span><br><span class="line">access(&quot;&#x2F;etc&#x2F;ld.so.preload&quot;, R_OK)      &#x3D; -1 ENOENT (No such file or directory)</span><br><span class="line">open(&quot;&#x2F;etc&#x2F;ld.so.cache&quot;, O_RDONLY|O_CLOEXEC) &#x3D; 3</span><br><span class="line">fstat(3, &#123;st_mode&#x3D;S_IFREG|0644, st_size&#x3D;50649, ...&#125;) &#x3D; 0</span><br><span class="line">mmap(NULL, 50649, PROT_READ, MAP_PRIVATE, 3, 0) &#x3D; </span><br><span class="line">............</span><br><span class="line">fstat(3, &#123;st_mode&#x3D;S_IFREG|0644, st_size&#x3D;106075056, ...&#125;) &#x3D; 0</span><br><span class="line">mmap(NULL, 106075056, PROT_READ, MAP_PRIVATE, 3, 0) &#x3D; 0x7fbd20817000</span><br><span class="line">close(3)                                &#x3D; 0</span><br><span class="line">fstat(1, &#123;st_mode&#x3D;S_IFCHR|0620, st_rdev&#x3D;makedev(136, 0), ...&#125;) &#x3D; 0</span><br><span class="line">open(&quot;&#x2F;tmp&#x2F;file&quot;, O_RDONLY)             &#x3D; 3</span><br><span class="line">fstat(3, &#123;st_mode&#x3D;S_IFREG|0644, st_size&#x3D;2, ...&#125;) &#x3D; 0</span><br><span class="line">fadvise64(3, 0, 0, POSIX_FADV_SEQUENTIAL) &#x3D; 0</span><br><span class="line">read(3, &quot;1\n&quot;, 65536)                   &#x3D; 2</span><br><span class="line">write(1, &quot;1\n&quot;, 21</span><br><span class="line">)                      &#x3D; 2</span><br><span class="line">read(3, &quot;&quot;, 65536)                      &#x3D; 0</span><br><span class="line">close(3)                                &#x3D; 0</span><br><span class="line">close(1)                                &#x3D; 0</span><br><span class="line">close(2)                                &#x3D; 0</span><br><span class="line">exit_group(0)                           &#x3D; ?</span><br><span class="line">+++ exited with 0 +++</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>还有另一个有趣的用途，可以报告执行一个命令每个系统调用在内核中所消耗时间，使用 -c 选项</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# strace -c cat &#x2F;tmp&#x2F;file </span><br><span class="line">1</span><br><span class="line">% time     seconds  usecs&#x2F;call     calls    errors syscall</span><br><span class="line">------ ----------- ----------- --------- --------- ----------------</span><br><span class="line"> 27.78    0.000015           4         4           open</span><br><span class="line"> 16.67    0.000009           1         8           mmap</span><br><span class="line"> 12.96    0.000007           2         4           mprotect</span><br><span class="line">  9.26    0.000005           5         1           write</span><br><span class="line">  7.41    0.000004           1         3           read</span><br><span class="line">  5.56    0.000003           1         5           fstat</span><br><span class="line">  5.56    0.000003           3         1           munmap</span><br><span class="line">  5.56    0.000003           3         1           execve</span><br><span class="line">  3.70    0.000002           2         1         1 access</span><br><span class="line">  1.85    0.000001           0         6           close</span><br><span class="line">  1.85    0.000001           0         4           brk</span><br><span class="line">  1.85    0.000001           1         1           fadvise64</span><br><span class="line">  0.00    0.000000           0         1           arch_prctl</span><br><span class="line">------ ----------- ----------- --------- --------- ----------------</span><br><span class="line">100.00    0.000054                    40         1 total</span><br></pre></td></tr></table></figure>
+
+<h3 id="ltrace"><a href="#ltrace" class="headerlink" title="ltrace"></a>ltrace</h3><p>一个库的调用跟踪程序，strace的输出十分相似，只不过跟踪的是库调用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# ltrace cat &#x2F;tmp&#x2F;file </span><br><span class="line">__libc_start_main(0x401a20, 2, 0x7ffcd8746458, 0x408ca0 &lt;unfinished ...&gt;</span><br><span class="line">getpagesize()                                                                     &#x3D; 4096</span><br><span class="line">strrchr(&quot;cat&quot;, &#39;&#x2F;&#39;)                                                               &#x3D; nil</span><br><span class="line">setlocale(LC_ALL, &quot;&quot;)                                                             &#x3D; &quot;en_US.UTF-8&quot;</span><br><span class="line">bindtextdomain(&quot;coreutils&quot;, &quot;&#x2F;usr&#x2F;share&#x2F;locale&quot;)                                  &#x3D; &quot;&#x2F;usr&#x2F;share&#x2F;locale&quot;</span><br><span class="line">textdomain(&quot;coreutils&quot;)                                                           &#x3D; &quot;coreutils&quot;</span><br><span class="line">__cxa_atexit(0x4029f0, 0, 0, 0x736c6974756572)             </span><br><span class="line"></span><br><span class="line">.......                      </span><br><span class="line"></span><br><span class="line">malloc(69631)                                                                     &#x3D; 0x2553030</span><br><span class="line"></span><br><span class="line">fflush(0x7f8cf18771c0)                                                            &#x3D; 0</span><br><span class="line">fclose(0x7f8cf18771c0)                                                            &#x3D; 0</span><br><span class="line">+++ exited (status 0) +++</span><br></pre></td></tr></table></figure>
+
+<p>跟踪cat命令</p>
+<h3 id="gnuplot"><a href="#gnuplot" class="headerlink" title="gnuplot"></a>gnuplot</h3><p>命令行绘图工具<br>我们可以通过两种方法操作gnuplot<br>一种是交互式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# gnuplot</span><br><span class="line"></span><br><span class="line">    G N U P L O T</span><br><span class="line">    Version 4.6 patchlevel 2    last modified 2013-03-14 </span><br><span class="line">    Build System: Linux x86_64</span><br><span class="line"></span><br><span class="line">    Copyright (C) 1986-1993, 1998, 2004, 2007-2013</span><br><span class="line">    Thomas Williams, Colin Kelley and many others</span><br><span class="line"></span><br><span class="line">    gnuplot home:     http:&#x2F;&#x2F;www.gnuplot.info</span><br><span class="line">    faq, bugs, etc:   type &quot;help FAQ&quot;</span><br><span class="line">    immediate help:   type &quot;help&quot;  (plot window: hit &#39;h&#39;)</span><br><span class="line"></span><br><span class="line">Terminal type set to &#39;x11&#39;</span><br><span class="line">gnuplot&gt; </span><br></pre></td></tr></table></figure>
+
+<p>第二种是将gnuplot的指令写入到一个文件中，使用gnuplot执行这个文件，这样方便调试和修改。</p>
+<h4 id="示例一"><a href="#示例一" class="headerlink" title="示例一"></a><strong>示例一</strong></h4><p><strong>线性趋势图</strong><br>使用sar命令分析统计数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LANG&#x3D;C sar -f &#x2F;var&#x2F;log&#x2F;sa&#x2F;sa15 &gt; &#x2F;tmp&#x2F;cpu.txt</span><br></pre></td></tr></table></figure>
+
+<p>LANG=C 使sar输出的时间为24小时制<br>删除 cpu.txt 中空行和数据无关的字符，只保留分析数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# cat !$</span><br><span class="line">cat &#x2F;tmp&#x2F;cpu.txt</span><br><span class="line">14:50:02        all      0.83      0.00      0.64      0.01      0.00     98.52</span><br><span class="line">15:10:01        all      3.77      0.00      1.00      0.19      0.00     95.04</span><br><span class="line">15:20:01        all      0.72      0.00      0.58      0.01      0.00     98.69</span><br><span class="line">15:30:01        all      0.62      0.00      0.49      0.01      0.00     98.88</span><br><span class="line">15:40:01        all      1.22      0.00      0.64      0.08      0.00     98.06</span><br></pre></td></tr></table></figure>
+
+<p>在此文件中，第一列的时间选作X轴，y轴选择第三列（%user）、第五列（%system）、第六列（%iowait）</p>
+<blockquote>
+<p>编写gnuplot指令文件 cpu.gnuplot 内容如下：</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# vim &#x2F;tmp&#x2F;cpu.gnuplot </span><br><span class="line">set xdata time #设置x轴数据为时间</span><br><span class="line">set timefmt &quot;%H:%M:%S&quot; #设置时间格式</span><br><span class="line">set xlabel &#39;TIME&#39; #设置x轴标签为TIME</span><br><span class="line">set ylabel &#39;CPU&#39; #设置y轴便签为CPU</span><br><span class="line">set term png size 1300,800 #设置图片大小</span><br><span class="line">set output &quot;&#x2F;tmp&#x2F;cpu.png&quot; #设置平面图保存位置</span><br><span class="line">plot \</span><br><span class="line">&#39;&#x2F;tmp&#x2F;cpu.txt&#39; using 1:3 title &#39;%US&#39; with lines, \</span><br><span class="line">&#39;&#x2F;tmp&#x2F;cpu.txt&#39; using 1:5 title &#39;%SY&#39; with lines, \</span><br><span class="line">&#39;&#x2F;tmp&#x2F;cpu.txt&#39; using 1:6 title &#39;%WA&#39; with lines #绘制图片</span><br></pre></td></tr></table></figure>
+
+<p>执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# gnuplot &#x2F;tmp&#x2F;cpu.gnuplot </span><br></pre></td></tr></table></figure>
+
+<p>使用xshell的可以用sz导出图片</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# sz &#x2F;tmp&#x2F;cpu.png </span><br></pre></td></tr></table></figure>
+
+<p>得到下图</p>
+<p><img src="https://img-blog.csdnimg.cn/2020041516400134.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQyMTg0Njk5,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="示例二"><a href="#示例二" class="headerlink" title="示例二"></a><strong>示例二</strong></h4><p><strong>柱状趋势图</strong><br>编写gnuplot指令文件 cpu.gnuplot 内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">vim &#x2F;tmp&#x2F;cpu.gnuplot </span><br><span class="line"></span><br><span class="line">set term png size 1300,800</span><br><span class="line">set output &quot;&#x2F;tmp&#x2F;cpu.png&quot;</span><br><span class="line">set grid</span><br><span class="line">set style data histograms</span><br><span class="line">set style fill solid 1.00 border -1</span><br><span class="line">plot \</span><br><span class="line">&#39;&#x2F;tmp&#x2F;cpu.txt&#39; using 3:xtic(1) title &#39;%US&#39;</span><br><span class="line">set grid</span><br></pre></td></tr></table></figure>
+
+<p>执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# gnuplot &#x2F;tmp&#x2F;cpu.gnuplot </span><br></pre></td></tr></table></figure>
+
+<p>使用xshell的可以用sz导出图片</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@Email ~]# sz &#x2F;tmp&#x2F;cpu.png </span><br></pre></td></tr></table></figure>
+
+<p>得到下图：</p>
+<p><img src="https://img-blog.csdnimg.cn/20200415163945660.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQyMTg0Njk5,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<blockquote>
+<p><strong>多柱状趋势图</strong><br>编写gnuplot指令文件 cpu.gnuplot 内容如下：</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">set term png size 1300,800</span><br><span class="line">set output &quot;&#x2F;tmp&#x2F;cpu.png&quot;</span><br><span class="line">set grid</span><br><span class="line">set style data histograms</span><br><span class="line">set style fill solid 1.00 border -1</span><br><span class="line">plot \</span><br><span class="line">&#39;&#x2F;tmp&#x2F;cpu.txt&#39; using 3:xtic(1) title &#39;%US&#39;, \</span><br><span class="line">&#39;&#x2F;tmp&#x2F;cpu.txt&#39; using 5:xtic(1) title &#39;%SY&#39;, \</span><br><span class="line">&#39;&#x2F;tmp&#x2F;cpu.txt&#39; using 6:xtic(1) title &#39;%WA&#39; \</span><br></pre></td></tr></table></figure>
+
+<p>得到以下图形：</p>
+<p><img src="https://img-blog.csdnimg.cn/20200415163922120.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQyMTg0Njk5,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>END</p>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined" rel="external nofollow noreferrer">Thaons</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://kococ.cn/posts/6935/">https://kococ.cn/posts/6935/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://kococ.cn" target="_blank">北青永恒</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/">基础命令</a></div><div class="post_share"><div class="social-share" data-image="https://gitee.com/xoxoyun/img/raw/master/image/0140.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/44280/"><img class="prev-cover" src="https://gitee.com/xoxoyun/img/raw/master/image/0105.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">ELK-Nginx日志分析及绘图</div></div></a></div><div class="next-post pull-right"><a href="/posts/56406/"><img class="next-cover" src="https://gitee.com/xoxoyun/img/raw/master/image/0162.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">亿级 ELK 日志平台构建实践</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/41171/" title="Linux find 命令详解"><img class="cover" src="https://gitee.com/xoxoyun/img/raw/master/image/0182.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-09-29</div><div class="title">Linux find 命令详解</div></div></a></div></div></div></article></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2018 - 2020 By Thaons</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">既来之 则安之</div><div class="icp"><a target="_blank" rel="noopener external nofollow noreferrer" href="http://beian.miit.gov.cn/"><img class="icp-icon" src="https://gitee.com/xoxoyun/img/raw/master/image/icp.png"/><span>豫ICP备20001100号</span></a></div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a>
+ <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><div class="aplayer no-destroy" data-id="712292593" data-server="netease" data-type="artist" data-fixed="true" data-mini="true" data-listFolded="true" data-order="random" data-preload="none" data-autoplay="true" muted></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/gh/metowolf/MetingJS@1.2/dist/Meting.min.js"></script><script>(function(){
+  const bp = document.createElement('script');
+  const curProtocol = window.location.protocol.split(':')[0];
+  if (curProtocol === 'https'){
+  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+  }
+  else{
+  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+  }
+  bp.dataset.pjax = ''
+  const s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(bp, s);
+})()</script></div></body></html>
