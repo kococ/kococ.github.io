@@ -1,0 +1,380 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MySQL高可用晋升 | 北青永恒</title><meta name="keywords" content="MySQL"><meta name="author" content="Thaons"><meta name="copyright" content="Thaons"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="企业高可用性标准 全年无故障率(非计划内故障停机) 99.9%                 ----&gt; 0.001*365*24*60&#x3D;525.6  min 99.99%                ----&gt; 0.0001*365*24*60&#x3D;52.56 min 99.999%               ----&gt; 0.0001*365*24*60&#x3D;5.256 min   高可用架构方案">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL高可用晋升">
+<meta property="og:url" content="https://kococ.cn/posts/38073/index.html">
+<meta property="og:site_name" content="北青永恒">
+<meta property="og:description" content="企业高可用性标准 全年无故障率(非计划内故障停机) 99.9%                 ----&gt; 0.001*365*24*60&#x3D;525.6  min 99.99%                ----&gt; 0.0001*365*24*60&#x3D;52.56 min 99.999%               ----&gt; 0.0001*365*24*60&#x3D;5.256 min   高可用架构方案">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/xoxoyun/img/raw/master/image/0136.jpg">
+<meta property="article:published_time" content="2019-02-05T15:54:00.000Z">
+<meta property="article:modified_time" content="2020-10-20T03:56:45.595Z">
+<meta property="article:author" content="Thaons">
+<meta property="article:tag" content="MySQL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/xoxoyun/img/raw/master/image/0136.jpg"><link rel="shortcut icon" href="https://www.kococ.cn/favicon.ico"><link rel="canonical" href="https://kococ.cn/posts/38073/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin="crossorigin"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="preconnect" href="//zz.bdstatic.com"/><meta name="yandex-verification" content="{&quot;theme_color&quot;:{&quot;enable&quot;:true,&quot;main&quot;:&quot;#49B1F5&quot;,&quot;paginator&quot;:&quot;#00c4b6&quot;,&quot;button_hover&quot;:&quot;#FF7242&quot;,&quot;text_selection&quot;:&quot;#00c4b6&quot;,&quot;link_color&quot;:&quot;#99a9bf&quot;,&quot;meta_color&quot;:&quot;#858585&quot;,&quot;hr_color&quot;:&quot;#A4D8FA&quot;,&quot;code_foreground&quot;:&quot;#F47466&quot;,&quot;code_background&quot;:&quot;rgba(27, 31, 35, .05)&quot;,&quot;toc_color&quot;:&quot;#00c4b6&quot;,&quot;blockquote_padding_color&quot;:&quot;#49b1f5&quot;,&quot;blockquote_background_color&quot;:&quot;#49b1f5&quot;}}"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  hexoversion: '5.0.0',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  ClickShowText: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: true,
+  isSidebar: true,
+  postUpdate: '2020-10-20 11:56:45'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {
+  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }
+})()</script><link rel="stylesheet" href="/css/footer.css"><meta name="generator" content="Hexo 5.0.0"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="https://gitee.com/xoxoyun/img/raw/master/image/wxuser.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">71</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">75</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">8</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" target="_blank" rel="noopener external nofollow noreferrer" href="https://music.kococ.cn"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page" target="_blank" rel="noopener external nofollow noreferrer" href="http://www.2020web.cn"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友联</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div id="body-wrap"><div id="sidebar"><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BC%81%E4%B8%9A%E9%AB%98%E5%8F%AF%E7%94%A8%E6%80%A7%E6%A0%87%E5%87%86"><span class="toc-number">1.</span> <span class="toc-text">企业高可用性标准</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%A8%E5%B9%B4%E6%97%A0%E6%95%85%E9%9A%9C%E7%8E%87-%E9%9D%9E%E8%AE%A1%E5%88%92%E5%86%85%E6%95%85%E9%9A%9C%E5%81%9C%E6%9C%BA"><span class="toc-number">1.1.</span> <span class="toc-text">全年无故障率(非计划内故障停机)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84%E6%96%B9%E6%A1%88"><span class="toc-number">1.2.</span> <span class="toc-text"> 高可用架构方案</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E7%AE%80%E4%BB%8B"><span class="toc-number">2.</span> <span class="toc-text">主从复制简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%89%8D%E6%8F%90-%E6%90%AD%E5%BB%BA%E4%B8%BB%E4%BB%8E%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text"> 主从复制前提(搭建主从的过程)</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%90%AD%E5%BB%BA-Classic-replication"><span class="toc-number">4.</span> <span class="toc-text">主从复制搭建(Classic replication)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B8%85%E7%90%86%E4%B8%BB%E5%BA%93%E6%95%B0%E6%8D%AE"><span class="toc-number">4.1.</span> <span class="toc-text">清理主库数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%87%8D%E6%96%B0%E5%88%9D%E5%A7%8B%E5%8C%963307"><span class="toc-number">4.2.</span> <span class="toc-text">重新初始化3307</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9my-cnf-%E5%BC%80%E5%90%AF%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%97%A5%E5%BF%97%E5%8A%9F%E8%83%BD"><span class="toc-number">4.3.</span> <span class="toc-text">修改my.cnf ,开启二进制日志功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E6%89%80%E6%9C%89%E8%8A%82%E7%82%B9"><span class="toc-number">4.4.</span> <span class="toc-text">启动所有节点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E5%BA%93%E4%B8%AD%E5%88%9B%E5%BB%BA%E5%A4%8D%E5%88%B6%E7%94%A8%E6%88%B7"><span class="toc-number">4.5.</span> <span class="toc-text">主库中创建复制用户</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%87%E4%BB%BD%E4%B8%BB%E5%BA%93%E5%B9%B6%E6%81%A2%E5%A4%8D%E5%88%B0%E4%BB%8E%E5%BA%93"><span class="toc-number">4.6.</span> <span class="toc-text">备份主库并恢复到从库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%91%8A%E7%9F%A5%E4%BB%8E%E5%BA%93%E5%85%B3%E9%94%AE%E5%A4%8D%E5%88%B6%E4%BF%A1%E6%81%AF"><span class="toc-number">4.7.</span> <span class="toc-text">告知从库关键复制信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%80%E5%90%AF%E4%B8%BB%E4%BB%8E%E4%B8%93%E7%94%A8%E7%BA%BF%E7%A8%8B"><span class="toc-number">4.8.</span> <span class="toc-text">开启主从专用线程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A3%80%E6%9F%A5%E5%A4%8D%E5%88%B6%E7%8A%B6%E6%80%81"><span class="toc-number">4.9.</span> <span class="toc-text">检查复制状态</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E7%9A%84%E5%8E%9F%E7%90%86-Classic-Replication"><span class="toc-number">5.</span> <span class="toc-text">主从复制的原理 (Classic Replication)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E4%B8%AD%E8%AE%BE%E7%BD%AE%E5%88%B0%E7%9A%84%E6%96%87%E4%BB%B6%E5%92%8C%E7%BA%BF%E7%A8%8B"><span class="toc-number">5.1.</span> <span class="toc-text">主从中设置到的文件和线程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B"><span class="toc-number">5.2.</span> <span class="toc-text">线程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E4%BB%B6"><span class="toc-number">5.3.</span> <span class="toc-text">文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%8E%9F%E7%90%86"><span class="toc-number">5.4.</span> <span class="toc-text">主从复制原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%8E%9F%E7%90%86%E6%8F%8F%E8%BF%B0%EF%BC%9A"><span class="toc-number">5.5.</span> <span class="toc-text">主从复制原理描述：</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E6%95%85%E9%9A%9C%E7%9B%91%E6%8E%A7-%E5%88%86%E6%9E%90-%E5%A4%84%E7%90%86"><span class="toc-number">6.</span> <span class="toc-text">主从故障监控\分析\处理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E7%9B%B8%E5%85%B3%E7%9B%91%E6%8E%A7"><span class="toc-number">6.1.</span> <span class="toc-text">线程相关监控</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E5%BA%93"><span class="toc-number">6.2.</span> <span class="toc-text">主库:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E5%BA%93"><span class="toc-number">6.3.</span> <span class="toc-text">从库:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E5%BA%93%E7%9B%B8%E5%85%B3%E4%BF%A1%E6%81%AF%E7%9B%91%E6%8E%A7"><span class="toc-number">6.4.</span> <span class="toc-text">主库相关信息监控</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E5%BA%93%E4%B8%AD%E7%BB%A7%E6%97%A5%E5%BF%97%E7%9A%84%E5%BA%94%E7%94%A8%E7%8A%B6%E6%80%81"><span class="toc-number">6.5.</span> <span class="toc-text">从库中继日志的应用状态</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E5%BA%93%E5%A4%8D%E5%88%B6%E7%BA%BF%E7%A8%8B%E6%9C%89%E5%85%B3%E7%9A%84%E7%8A%B6%E6%80%81"><span class="toc-number">6.6.</span> <span class="toc-text">从库复制线程有关的状态</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%87%E6%BB%A4%E5%A4%8D%E5%88%B6%E6%9C%89%E5%85%B3%E7%9A%84%E7%8A%B6%E6%80%81"><span class="toc-number">6.7.</span> <span class="toc-text">过滤复制有关的状态</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E5%BB%B6%E6%97%B6%E7%9B%B8%E5%85%B3%E7%8A%B6%E6%80%81-%E9%9D%9E%E4%BA%BA%E4%B8%BA"><span class="toc-number">6.8.</span> <span class="toc-text">主从延时相关状态(非人为)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BB%B6%E6%97%B6%E4%BB%8E%E5%BA%93%E6%9C%89%E5%85%B3%E7%9A%84%E7%8A%B6%E6%80%81-%E4%BA%BA%E4%B8%BA"><span class="toc-number">6.9.</span> <span class="toc-text">延时从库有关的状态(人为)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GTID-%E5%A4%8D%E5%88%B6%E6%9C%89%E5%85%B3%E7%9A%84%E7%8A%B6%E6%80%81"><span class="toc-number">6.10.</span> <span class="toc-text">GTID 复制有关的状态</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%95%85%E9%9A%9C%E5%88%86%E6%9E%90"><span class="toc-number">6.11.</span> <span class="toc-text">主从复制故障分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IO"><span class="toc-number">6.12.</span> <span class="toc-text">IO</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E4%B8%BB%E5%BA%93"><span class="toc-number">6.13.</span> <span class="toc-text">连接主库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%B7%E6%B1%82%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%97%A5%E5%BF%97"><span class="toc-number">6.14.</span> <span class="toc-text">请求二进制日志</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SQL-%E7%BA%BF%E7%A8%8B%E6%95%85%E9%9A%9C"><span class="toc-number">6.15.</span> <span class="toc-text">SQL 线程故障</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E5%8A%B3%E6%B0%B8%E9%80%B8%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">6.16.</span> <span class="toc-text">一劳永逸的方法:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E5%BB%B6%E6%97%B6%E7%9B%91%E6%8E%A7%E5%8F%8A%E5%8E%9F%E5%9B%A0"><span class="toc-number">6.17.</span> <span class="toc-text">主从延时监控及原因</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%96%E5%9C%A8%E5%9B%A0%E7%B4%A0"><span class="toc-number">6.18.</span> <span class="toc-text">外在因素</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E5%BA%93-1"><span class="toc-number">6.19.</span> <span class="toc-text">主库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E5%BA%93-1"><span class="toc-number">6.20.</span> <span class="toc-text">从库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">6.21.</span> <span class="toc-text">小结</span></a></li></ol></li></ol></div></div></div><header class="post-bg" id="page-header" style="background-image: url(https://gitee.com/xoxoyun/img/raw/master/image/0136.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">北青永恒</a></span><span id="menus"><div id="search_button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" target="_blank" rel="noopener external nofollow noreferrer" href="https://music.kococ.cn"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page" target="_blank" rel="noopener external nofollow noreferrer" href="http://www.2020web.cn"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友联</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">MySQL高可用晋升</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2019-02-05T15:54:00.000Z" title="发表于 2019-02-05 23:54:00">2019-02-05</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2020-10-20T03:56:45.595Z" title="更新于 2020-10-20 11:56:45">2020-10-20</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%BB%98%E8%AE%A4%E5%88%86%E7%B1%BB/">默认分类</a></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>9分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><h1 id="企业高可用性标准"><a href="#企业高可用性标准" class="headerlink" title="企业高可用性标准"></a>企业高可用性标准</h1><h2 id="全年无故障率-非计划内故障停机"><a href="#全年无故障率-非计划内故障停机" class="headerlink" title="全年无故障率(非计划内故障停机)"></a>全年无故障率(非计划内故障停机)</h2><pre><code>99.9%                 ----&gt; 0.001*365*24*60=525.6  min
+99.99%                ----&gt; 0.0001*365*24*60=52.56 min
+99.999%               ----&gt; 0.0001*365*24*60=5.256 min</code></pre>
+<h2 id="高可用架构方案"><a href="#高可用架构方案" class="headerlink" title=" 高可用架构方案"></a> 高可用架构方案</h2><pre><code>负载均衡:有一定的高可用性 
+LVS  Nginx
+主备系统:有高可用性,但是需要切换,是单活的架构
+KA ,   MHA, MMM
+真正高可用(多活系统): 
+NDB Cluster  Oracle RAC  Sysbase cluster   , InnoDB Cluster（MGR）,PXC , MGC</code></pre>
+<h1 id="主从复制简介"><a href="#主从复制简介" class="headerlink" title="主从复制简介"></a>主从复制简介</h1><pre><code>1.1. 基于二进制日志复制的
+1.2. 主库的修改操作会记录二进制日志
+1.3. 从库会请求新的二进制日志并回放,最终达到主从数据同步
+1.4. 主从复制核心功能:
+辅助备份,处理物理损坏                   
+扩展新型的架构:高可用,高性能,分布式架构等</code></pre>
+<h1 id="主从复制前提-搭建主从的过程"><a href="#主从复制前提-搭建主从的过程" class="headerlink" title=" 主从复制前提(搭建主从的过程)"></a> 主从复制前提(搭建主从的过程)</h1><pre><code>2.1 两台以上mysql实例 ,server_id,server_uuid不同
+2.2 主库开启二进制日志
+2.3 专用的复制用户
+2.4 保证主从开启之前的某个时间点,从库数据是和主库一致(补课)
+2.5 告知从库,复制user,passwd,IP port,以及复制起点(change master to)
+2.6 线程(三个):Dump thread  IO thread  SQL thread 开启(start slave)</code></pre>
+<h1 id="主从复制搭建-Classic-replication"><a href="#主从复制搭建-Classic-replication" class="headerlink" title="主从复制搭建(Classic replication)"></a>主从复制搭建(Classic replication)</h1><h2 id="清理主库数据"><a href="#清理主库数据" class="headerlink" title="清理主库数据"></a>清理主库数据</h2><pre><code>rm -rf /data/3307/data/*</code></pre>
+<h2 id="重新初始化3307"><a href="#重新初始化3307" class="headerlink" title="重新初始化3307"></a>重新初始化3307</h2><pre><code>mysqld --initialize-insecure --user=mysql --basedir=/app/mysql --datadir=/data/3307/data</code></pre>
+<h2 id="修改my-cnf-开启二进制日志功能"><a href="#修改my-cnf-开启二进制日志功能" class="headerlink" title="修改my.cnf ,开启二进制日志功能"></a>修改my.cnf ,开启二进制日志功能</h2><pre><code>[root@db01 3307]# vim /data/3307/my.cnf 
+log_bin=/data/3307/data/mysql-bin</code></pre>
+<h2 id="启动所有节点"><a href="#启动所有节点" class="headerlink" title="启动所有节点"></a>启动所有节点</h2><pre><code>[root@db01 3307]# systemctl start mysqld3307
+[root@db01 3307]# systemctl start mysqld3308
+[root@db01 3307]# systemctl start mysqld3309
+[root@db01 3307]# ps -ef |grep mysqld
+mysql      3684      1  4 09:59 ?        00:00:00 /app/mysql/bin/mysqld --defaults-file=/data/3307/my.cnf
+mysql      3719      1  7 09:59 ?        00:00:00 /app/mysql/bin/mysqld --defaults-file=/data/3308/my.cnf
+mysql      3754      1  8 09:59 ?        00:00:00 /app/mysql/bin/mysqld --defaults-file=/data/3309/my.cnf
+[root@db01 3307]# mysql -S /data/3307/mysql.sock -e &quot;select @@server_id&quot;
+[root@db01 3307]# mysql -S /data/3308/mysql.sock -e &quot;select @@server_id&quot;
+[root@db01 3307]# mysql -S /data/3309/mysql.sock -e &quot;select @@server_id&quot;</code></pre>
+<h2 id="主库中创建复制用户"><a href="#主库中创建复制用户" class="headerlink" title="主库中创建复制用户"></a>主库中创建复制用户</h2><pre><code>[root@db01 3307]# mysql -S /data/3307/mysql.sock 
+db01 [(none)]&gt;grant replication slave on *.* to repl@&#39;10.0.0.%&#39; identified by &#39;123&#39;;
+db01 [(none)]&gt;select user,host from mysql.user;</code></pre>
+<h2 id="备份主库并恢复到从库"><a href="#备份主库并恢复到从库" class="headerlink" title="备份主库并恢复到从库"></a>备份主库并恢复到从库</h2><pre><code>[root@db01 3307]# mysqldump -S /data/3307/mysql.sock -A --master-data=2 --single-transaction  -R --triggers &gt;/backup/full.sql
+-- CHANGE MASTER TO MASTER_LOG_FILE=&#39;mysql-bin.000001&#39;, MASTER_LOG_POS=653;
+[root@db01 3307]# mysql -S /data/3308/mysql.sock
+db01 [(none)]&gt;source /backup/full.sql</code></pre>
+<h2 id="告知从库关键复制信息"><a href="#告知从库关键复制信息" class="headerlink" title="告知从库关键复制信息"></a>告知从库关键复制信息</h2><pre><code>ip port user  password  binlog position 
+[root@db01 3307]# mysql -S /data/3308/mysql.sock
+db01 [mysql]&gt;help change master to
+
+CHANGE MASTER TO
+  MASTER_HOST=&#39;10.0.0.51&#39;,
+  MASTER_USER=&#39;repl&#39;,
+  MASTER_PASSWORD=&#39;123&#39;,
+  MASTER_PORT=3307,
+  MASTER_LOG_FILE=&#39;mysql-bin.000001&#39;,
+  MASTER_LOG_POS=653,
+  MASTER_CONNECT_RETRY=10;</code></pre>
+<h2 id="开启主从专用线程"><a href="#开启主从专用线程" class="headerlink" title="开启主从专用线程"></a>开启主从专用线程</h2><pre><code>start slave ;</code></pre>
+<h2 id="检查复制状态"><a href="#检查复制状态" class="headerlink" title="检查复制状态"></a>检查复制状态</h2><pre><code>db01 [mysql]&gt;show slave  status \G
+Slave_IO_Running: Yes
+Slave_SQL_Running: Yes</code></pre>
+<h1 id="主从复制的原理-Classic-Replication"><a href="#主从复制的原理-Classic-Replication" class="headerlink" title="主从复制的原理 (Classic Replication)"></a>主从复制的原理 (Classic Replication)</h1><h2 id="主从中设置到的文件和线程"><a href="#主从中设置到的文件和线程" class="headerlink" title="主从中设置到的文件和线程"></a>主从中设置到的文件和线程</h2><h2 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h2><pre><code>主:
+DUMP THREAD
+从:
+IO  THREAD
+SQL THREAD</code></pre>
+<h2 id="文件"><a href="#文件" class="headerlink" title="文件"></a>文件</h2><pre><code>主:
+mysql-bin.000001
+从: 
+db01-relay.000001     ===&gt;中继日志
+master.info                 ===》主库信息记录日志
+relay-log.info              ===&gt; 记录中继应用情况信息</code></pre>
+<h2 id="主从复制原理"><a href="#主从复制原理" class="headerlink" title="主从复制原理"></a>主从复制原理</h2><p><img src="http://47.101.133.77/usr/uploads/2020/01/2764515632.png" alt="主从复制原理"></p>
+<p><img src="http://47.101.133.77/usr/uploads/2020/01/3454191668.png" alt="工作流程"></p>
+<h2 id="主从复制原理描述："><a href="#主从复制原理描述：" class="headerlink" title="主从复制原理描述："></a>主从复制原理描述：</h2><hr>
+<pre><code>1.change master to 时，ip pot user password binlog position写入到master.info进行记录
+2. start slave 时，从库会启动IO线程和SQL线程
+3.IO_T，读取master.info信息，获取主库信息连接主库
+4. 主库会生成一个准备binlog DUMP线程，来响应从库
+5. IO_T根据master.info记录的binlog文件名和position号，请求主库DUMP最新日志
+6. DUMP线程检查主库的binlog日志，如果有新的，TP(传送)给从从库的IO_T
+7. IO_T将收到的日志存储到了TCP/IP 缓存，立即返回ACK给主库 ，主库工作完成
+8.IO_T将缓存中的数据，存储到relay-log日志文件,更新master.info文件binlog 文件名和postion，IO_T工作完成
+9.SQL_T读取relay-log.info文件，获取到上次执行到的relay-log的位置，作为起点，回放relay-log
+10.SQL_T回放完成之后，会更新relay-log.info文件。
+11. relay-log会有自动清理的功能。
+细节：（5.5版本之后）
+1.主库一旦有新的日志生成，会发送“信号”给binlog dump ，IO线程再请求</code></pre>
+<hr>
+<h1 id="主从故障监控-分析-处理"><a href="#主从故障监控-分析-处理" class="headerlink" title="主从故障监控\分析\处理"></a>主从故障监控\分析\处理</h1><h2 id="线程相关监控"><a href="#线程相关监控" class="headerlink" title="线程相关监控"></a>线程相关监控</h2><h2 id="主库"><a href="#主库" class="headerlink" title="主库:"></a>主库:</h2><pre><code>show full processlist;
+每个从库都会有一行dump相关的信息
+HOSTS: 
+db01:47176
+State:
+Master has sent all binlog to slave; waiting for more updates
+如果现实非以上信息,说明主从之间的关系出现了问题    </code></pre>
+<h2 id="从库"><a href="#从库" class="headerlink" title="从库:"></a>从库:</h2><pre><code>db01 [(none)]&gt;show slave status \G</code></pre>
+<h2 id="主库相关信息监控"><a href="#主库相关信息监控" class="headerlink" title="主库相关信息监控"></a>主库相关信息监控</h2><pre><code>Master_Host: 10.0.0.51
+Master_User: repl
+Master_Port: 3307
+Master_Log_File: mysql-bin.000005
+Read_Master_Log_Pos: 444</code></pre>
+<h2 id="从库中继日志的应用状态"><a href="#从库中继日志的应用状态" class="headerlink" title="从库中继日志的应用状态"></a>从库中继日志的应用状态</h2><pre><code>Relay_Log_File: db01-relay-bin.000002
+Relay_Log_Pos: 485</code></pre>
+<h2 id="从库复制线程有关的状态"><a href="#从库复制线程有关的状态" class="headerlink" title="从库复制线程有关的状态"></a>从库复制线程有关的状态</h2><pre><code>Slave_IO_Running: Yes
+Slave_SQL_Running: Yes
+Last_IO_Errno: 0
+Last_IO_Error: 
+Last_SQL_Errno: 0
+Last_SQL_Error: </code></pre>
+<h2 id="过滤复制有关的状态"><a href="#过滤复制有关的状态" class="headerlink" title="过滤复制有关的状态"></a>过滤复制有关的状态</h2><pre><code>Replicate_Do_DB: 
+Replicate_Ignore_DB: 
+Replicate_Do_Table: 
+Replicate_Ignore_Table: 
+Replicate_Wild_Do_Table: 
+Replicate_Wild_Ignore_Table: </code></pre>
+<h2 id="主从延时相关状态-非人为"><a href="#主从延时相关状态-非人为" class="headerlink" title="主从延时相关状态(非人为)"></a>主从延时相关状态(非人为)</h2><pre><code>Seconds_Behind_Master: 0</code></pre>
+<h2 id="延时从库有关的状态-人为"><a href="#延时从库有关的状态-人为" class="headerlink" title="延时从库有关的状态(人为)"></a>延时从库有关的状态(人为)</h2><pre><code>SQL_Delay: 0
+SQL_Remaining_Delay: NULL</code></pre>
+<h2 id="GTID-复制有关的状态"><a href="#GTID-复制有关的状态" class="headerlink" title="GTID 复制有关的状态"></a>GTID 复制有关的状态</h2><pre><code>Retrieved_Gtid_Set: 
+Executed_Gtid_Set: 
+Auto_Position: 0</code></pre>
+<h2 id="主从复制故障分析"><a href="#主从复制故障分析" class="headerlink" title="主从复制故障分析"></a>主从复制故障分析</h2><h2 id="IO"><a href="#IO" class="headerlink" title="IO"></a>IO</h2><h2 id="连接主库"><a href="#连接主库" class="headerlink" title="连接主库"></a>连接主库</h2><pre><code>(1) 用户 密码  IP  port
+Last_IO_Error: error reconnecting to master &#39;repl@10.0.0.51:3307&#39; - retry-time: 10  retries: 7
+[root@db01 ~]# mysql -urepl  -p123333  -h 10.0.0.51 -P 3307
+ERROR 1045 (28000): Access denied for user &#39;repl&#39;@&#39;db01&#39; (using password: YES)
+
+原因:
+密码错误 
+用户错误 
+skip_name_resolve
+地址错误
+端口</code></pre>
+<p>处理方法</p>
+<pre><code>stop  slave  
+reset slave all 
+change master to 
+start slave
+主库连接数上线,或者是主库太繁忙
+
+show slave  staus \G 
+Last_IO_Errno: 1040
+Last_IO_Error: error reconnecting to master &#39;repl@10.0.0.51:3307&#39; - retry-time: 10  retries: 7
+处理思路:
+拿复制用户,手工连接一下
+
+[root@db01 ~]# mysql -urepl -p123 -h 10.0.0.51 -P 3307 
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1040 (HY000): Too many connections
+处理方法:
+db01 [(none)]&gt;set global max_connections=300;
+
+(3) 防火墙,网络不通</code></pre>
+<h2 id="请求二进制日志"><a href="#请求二进制日志" class="headerlink" title="请求二进制日志"></a>请求二进制日志</h2><pre><code>主库缺失日志
+从库方面,二进制日志位置点不对
+Last_IO_Error: Got fatal error 1236 from master when reading data from binary log: &#39;could not find next log; the first event &#39;mysql-bin.000001&#39; at 154, the last event read from &#39;/data/3307/data/mysql-bin.000002&#39; at 154, the last byte read from &#39;/data/3307/data/mysql-bin.000002&#39; at 154.&#39;
+注意: 在主从复制环境中,严令禁止主库中reset master; 可以选择expire 进行定期清理主库二进制日志
+解决方案:
+重新构建主从</code></pre>
+<h2 id="SQL-线程故障"><a href="#SQL-线程故障" class="headerlink" title="SQL 线程故障"></a>SQL 线程故障</h2><p>SQL线程功能：</p>
+<pre><code>(1)读写relay-log.info 
+(2)relay-log损坏,断节,找不到
+(3)接收到的SQL无法执行</code></pre>
+<p>导致SQL线程故障原因分析：</p>
+<pre><code>1. 版本差异，参数设定不同，比如：数据类型的差异，SQL_MODE影响
+2.要创建的数据库对象,已经存在
+3.要删除或修改的对象不存在  
+4.DML语句不符合表定义及约束时.  
+归根揭底的原因都是由于从库发生了写入操作.
+Last_SQL_Error: Error &#39;Can&#39;t create database &#39;db&#39;; database exists&#39; on query. Default database: &#39;db&#39;. Query: &#39;create database db&#39;
+
+处理方法(以从库为核心的处理方案)：
+
+方法一：
+stop slave; 
+set global sql_slave_skip_counter = 1;
+#将同步指针向下移动一个，如果多次不同步，可以重复操作。
+start slave;
+方法二：
+/etc/my.cnf
+slave-skip-errors = 1032,1062,1007
+常见错误代码:
+1007:对象已存在
+1032:无法执行DML
+1062:主键冲突,或约束冲突
+
+但是，以上操作有时是有风险的，最安全的做法就是重新构建主从。把握一个原则,一切以主库为主.</code></pre>
+<h2 id="一劳永逸的方法"><a href="#一劳永逸的方法" class="headerlink" title="一劳永逸的方法:"></a>一劳永逸的方法:</h2><pre><code>(1) 可以设置从库只读.
+db01 [(none)]&gt;show variables like &#39;%read_only%&#39;;
+注意：
+只会影响到普通用户，对管理员用户无效。
+(2)加中间件
+读写分离。</code></pre>
+<h2 id="主从延时监控及原因"><a href="#主从延时监控及原因" class="headerlink" title="主从延时监控及原因"></a>主从延时监控及原因</h2><pre><code>主库做了修改操作,从库比较长时间才能追上.</code></pre>
+<h2 id="外在因素"><a href="#外在因素" class="headerlink" title="外在因素"></a>外在因素</h2><pre><code>网络 
+主从硬件差异较大
+版本差异
+参数因素</code></pre>
+<h2 id="主库-1"><a href="#主库-1" class="headerlink" title="主库"></a>主库</h2><pre><code>(1) 二进制日志写入不及时
+[rep]&gt;select @@sync_binlog;
+(2) CR的主从复制中,binlog_dump线程,事件为单元,串行传送二进制日志(5.6 5.5)
+
+1. 主库并发事务量大,主库可以并行,传送时是串行
+2. 主库发生了大事务,由于是串行传送,会产生阻塞后续的事务.
+
+解决方案:
+1. 5.6 开始,开启GTID,实现了GC(group commit)机制,可以并行传输日志给从库IO
+2. 5.7 开始,不开启GTID,会自动维护匿名的GTID,也能实现GC,我们建议还是认为开启GTID
+3. 大事务拆成多个小事务,可以有效的减少主从延时.</code></pre>
+<h2 id="从库-1"><a href="#从库-1" class="headerlink" title="从库"></a>从库</h2><pre><code>SQL线程导致的主从延时
+在CR复制情况下: 从库默认情况下只有一个SQL,只能串行回放事务SQL
+1. 主库如果并发事务量较大,从库只能串行回放
+2. 主库发生了大事务,会阻塞后续的所有的事务的运行
+
+解决方案:
+1. 5.6 版本开启GTID之后,加入了SQL多线程的特性,但是只能针对不同库(database)下的事务进行并发回放.
+2. 5.7 版本开始GTID之后,在SQL方面,提供了基于逻辑时钟(logical_clock),binlog加入了seq_no机制,
+真正实现了基于事务级别的并发回放,这种技术我们把它称之为MTS(enhanced multi-threaded slave).
+3. 大事务拆成多个小事务,可以有效的减少主从延时.
+[https://dev.mysql.com/worklog/task/?id=6314]</code></pre>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><pre><code>1. 主从复制原理
+2. 主从复制故障
+3. 主从延时：group commit    MTS   </code></pre>
+<hr>
+<p>[player id=’712292593’ type=’collect’ autoplay=’true’/]</p>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined" rel="external nofollow noreferrer">Thaons</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://kococ.cn/posts/38073/">https://kococ.cn/posts/38073/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://kococ.cn" target="_blank">北青永恒</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/MySQL/">MySQL</a></div><div class="post_share"><div class="social-share" data-image="https://gitee.com/xoxoyun/img/raw/master/image/0136.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/35691/"><img class="prev-cover" src="https://cdn.jsdelivr.net/gh/kococ/IMAGE/64.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">搭建个人Leanote云笔记本</div></div></a></div><div class="next-post pull-right"><a href="/posts/1282/"><img class="next-cover" src="https://gitee.com/xoxoyun/img/raw/master/image/0072.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">GlusterFS分布式文件系统群集</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/22055/" title="Mysql+Keepalived 双主热备高可用图文配置详解"><img class="cover" src="https://gitee.com/xoxoyun/img/raw/master/image/0062.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2018-11-05</div><div class="title">Mysql+Keepalived 双主热备高可用图文配置详解</div></div></a></div></div></div></article></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2018 - 2020 By Thaons</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">既来之 则安之</div><div class="icp"><a target="_blank" rel="noopener external nofollow noreferrer" href="http://beian.miit.gov.cn/"><img class="icp-icon" src="https://gitee.com/xoxoyun/img/raw/master/image/icp.png"/><span>豫ICP备20001100号</span></a></div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a>
+ <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><div class="aplayer no-destroy" data-id="712292593" data-server="netease" data-type="artist" data-fixed="true" data-mini="true" data-listFolded="true" data-order="random" data-preload="none" data-autoplay="true" muted></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/gh/metowolf/MetingJS@1.2/dist/Meting.min.js"></script><script>(function(){
+  const bp = document.createElement('script');
+  const curProtocol = window.location.protocol.split(':')[0];
+  if (curProtocol === 'https'){
+  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+  }
+  else{
+  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+  }
+  bp.dataset.pjax = ''
+  const s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(bp, s);
+})()</script></div></body></html>
