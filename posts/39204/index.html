@@ -1,0 +1,483 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>微服务注册发现集群搭建——Registrator + Consul + Consul-template + nginx | 北青永恒</title><meta name="keywords" content="Registrator + Consul + Consul-template + nginx"><meta name="author" content="Thaons"><meta name="copyright" content="Thaons"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="微服务注册发现集群搭建——Registrator + Consul + Consul-template + nginx">
+<meta property="og:type" content="article">
+<meta property="og:title" content="微服务注册发现集群搭建——Registrator + Consul + Consul-template + nginx">
+<meta property="og:url" content="https://kococ.cn/posts/39204/index.html">
+<meta property="og:site_name" content="北青永恒">
+<meta property="og:description" content="微服务注册发现集群搭建——Registrator + Consul + Consul-template + nginx">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/xoxoyun/img/raw/master/image/0058.jpg">
+<meta property="article:published_time" content="2020-10-24T07:00:05.000Z">
+<meta property="article:modified_time" content="2020-10-24T07:01:42.375Z">
+<meta property="article:author" content="Thaons">
+<meta property="article:tag" content="Registrator + Consul + Consul-template + nginx">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/xoxoyun/img/raw/master/image/0058.jpg"><link rel="shortcut icon" href="https://www.kococ.cn/favicon.ico"><link rel="canonical" href="https://kococ.cn/posts/39204/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin="crossorigin"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="preconnect" href="//zz.bdstatic.com"/><meta name="yandex-verification" content="{&quot;theme_color&quot;:{&quot;enable&quot;:true,&quot;main&quot;:&quot;#49B1F5&quot;,&quot;paginator&quot;:&quot;#00c4b6&quot;,&quot;button_hover&quot;:&quot;#FF7242&quot;,&quot;text_selection&quot;:&quot;#00c4b6&quot;,&quot;link_color&quot;:&quot;#99a9bf&quot;,&quot;meta_color&quot;:&quot;#858585&quot;,&quot;hr_color&quot;:&quot;#A4D8FA&quot;,&quot;code_foreground&quot;:&quot;#F47466&quot;,&quot;code_background&quot;:&quot;rgba(27, 31, 35, .05)&quot;,&quot;toc_color&quot;:&quot;#00c4b6&quot;,&quot;blockquote_padding_color&quot;:&quot;#49b1f5&quot;,&quot;blockquote_background_color&quot;:&quot;#49b1f5&quot;}}"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  hexoversion: '5.0.0',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  ClickShowText: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isSidebar: true,
+  postUpdate: '2020-10-24 15:01:42'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {
+  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }
+})()</script><link rel="stylesheet" href="/css/footer.css"><meta name="generator" content="Hexo 5.0.0"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="https://gitee.com/xoxoyun/img/raw/master/image/wxuser.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">72</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">76</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">8</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" target="_blank" rel="noopener external nofollow noreferrer" href="https://music.kococ.cn"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page" target="_blank" rel="noopener external nofollow noreferrer" href="http://www.2020web.cn"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友联</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div id="body-wrap"><div id="sidebar"><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%8F%91%E7%8E%B0%E7%9A%84%E6%B5%81%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text">1. 服务注册发现的流程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-%E6%9C%8D%E5%8A%A1-%E2%80%9C%E8%87%AA%E6%B3%A8%E5%86%8C%E2%80%9D-%E4%B8%8E-%E2%80%9C%E7%AC%AC%E4%B8%89%E6%96%B9%E6%B3%A8%E5%86%8C%E2%80%9D%E3%80%82"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 服务 “自注册” 与 “第三方注册”。</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-%E8%87%AA%E6%B3%A8%E5%86%8C%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 自注册的实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3-%E7%AC%AC%E4%B8%89%E6%96%B9%E6%B3%A8%E5%86%8C%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.3.</span> <span class="toc-text">1.3 第三方注册的实现</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D"><span class="toc-number">2.</span> <span class="toc-text">2. 工具介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-Registrator"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 Registrator</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-consul"><span class="toc-number">2.2.</span> <span class="toc-text">2.1 consul</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-consul-template"><span class="toc-number">2.3.</span> <span class="toc-text">2.3 consul-template</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-4-nginx"><span class="toc-number">2.4.</span> <span class="toc-text">2.4 nginx</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E5%8D%95%E6%9C%BA%E5%AE%9E%E9%AA%8C"><span class="toc-number">3.</span> <span class="toc-text">3. 单机实验</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-%E7%8E%AF%E5%A2%83"><span class="toc-number">3.1.</span> <span class="toc-text">3.1 环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-%E5%90%AF%E5%8A%A8"><span class="toc-number">3.2.</span> <span class="toc-text">3.2 启动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-3-%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="toc-number">3.3.</span> <span class="toc-text">3.3 负载均衡</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-4-%E6%9F%A5%E7%9C%8B%E6%9C%8D%E5%8A%A1%E7%8A%B6%E6%80%81"><span class="toc-number">3.4.</span> <span class="toc-text">3.4 查看服务状态</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E4%B8%A4%E5%8F%B0%E7%89%A9%E7%90%86%E6%9C%BA"><span class="toc-number">4.</span> <span class="toc-text">4. 两台物理机</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-Consul-Cluster"><span class="toc-number">5.</span> <span class="toc-text">5. Consul Cluster</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#5-1-%E9%85%8D%E7%BD%AE"><span class="toc-number">5.1.</span> <span class="toc-text">5.1 配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-2-%E5%90%AF%E5%8A%A8"><span class="toc-number">5.2.</span> <span class="toc-text">5.2 启动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-3-%E5%8E%BB%E6%8E%89%E8%8A%82%E7%82%B9"><span class="toc-number">5.3.</span> <span class="toc-text">5.3 去掉节点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-1-%E5%85%B3%E9%97%AD%E4%B8%80%E4%B8%AA%E8%8A%82%E7%82%B9"><span class="toc-number">5.3.1.</span> <span class="toc-text">5.3.1 关闭一个节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-2-%E6%81%A2%E5%A4%8D%E8%8A%82%E7%82%B9"><span class="toc-number">5.3.2.</span> <span class="toc-text">5.3.2 恢复节点</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%99%84%E5%BD%95%EF%BC%9A"><span class="toc-number">6.</span> <span class="toc-text">附录：</span></a></li></ol></div></div></div><header class="post-bg" id="page-header" style="background-image: url(https://gitee.com/xoxoyun/img/raw/master/image/0058.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">北青永恒</a></span><span id="menus"><div id="search_button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" target="_blank" rel="noopener external nofollow noreferrer" href="https://music.kococ.cn"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page" target="_blank" rel="noopener external nofollow noreferrer" href="http://www.2020web.cn"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友联</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">微服务注册发现集群搭建——Registrator + Consul + Consul-template + nginx</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-10-24T07:00:05.000Z" title="发表于 2020-10-24 15:00:05">2020-10-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2020-10-24T07:01:42.375Z" title="更新于 2020-10-24 15:01:42">2020-10-24</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Devops/">Devops</a></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">8.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>36分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><p>在互联网应用领域，服务的动态性需求十分常见，这就对服务的自动发现和可动态扩展提出了很高的要求。</p>
+<p>微服务系统动辄上万个服务，而且还要动态伸缩。以人工写好的IP、Port 硬编码脚本的方式无法做到大规模自动化，稍微多点服务运维就傻了。微服务必然要做到ip和port自动分配，减少人工干预。我们需要让每个服务能动态的创建地址，同时调用方要能感知地址变化。</p>
+<p>这就需要有一个服务注册与发现的机制，这篇文件就是讨论如何实现这个机制。</p>
+<h1 id="1-服务注册发现的流程"><a href="#1-服务注册发现的流程" class="headerlink" title="1. 服务注册发现的流程"></a>1. 服务注册发现的流程</h1><p>我们做这个事情要达到的目的是：</p>
+<table>
+<thead>
+<tr>
+<th>注册发现模式</th>
+<th>传统模式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>服务启动后自动被发现</td>
+<td>手动注册</td>
+</tr>
+<tr>
+<td>动态变更负载均衡</td>
+<td>人工写入静态配置</td>
+</tr>
+<tr>
+<td>自动伸缩规模</td>
+<td>运维较长时间的手动调整</td>
+</tr>
+</tbody></table>
+<h2 id="1-1-服务-“自注册”-与-“第三方注册”。"><a href="#1-1-服务-“自注册”-与-“第三方注册”。" class="headerlink" title="1.1 服务 “自注册” 与 “第三方注册”。"></a>1.1 服务 “自注册” 与 “第三方注册”。</h2><p>按注册源分</p>
+<p>1.自注册：服务内部启动客户端，连接注册中心，写入服务信息。</p>
+<p>好处：</p>
+<ul>
+<li>没有引入第三方，进程数量少，少依赖。</li>
+</ul>
+<p>问题：</p>
+<ul>
+<li>服务代码对注册中心进行了硬编码，若更换了注册中心，服务代码也必须跟着调整；</li>
+<li>注册中心必须与每个服务都保持通信，来做心跳检测。如果服务很多时，对注册中心也是一种额外的开销；</li>
+</ul>
+<p>2.第三方注册（本文采用方式）：采用协同进程的方式，监听服务进程的变化，将服务信息写入注册中心。</p>
+<ul>
+<li>好处：做到了服务与注册中心的解耦，对服务而言，完成了服务的自动化注册；</li>
+<li>问题：协同进程本身也要考虑高可用，否则将成为单点故障的风险点；</li>
+</ul>
+<h2 id="1-2-自注册的实现"><a href="#1-2-自注册的实现" class="headerlink" title="1.2 自注册的实现"></a>1.2 自注册的实现</h2><p>自注册不是我们本篇要讨论的，可以自己写代码实现，我们讨论第三方注册的实现。</p>
+<h2 id="1-3-第三方注册的实现"><a href="#1-3-第三方注册的实现" class="headerlink" title="1.3 第三方注册的实现"></a>1.3 第三方注册的实现</h2><p>Docker 的出现，以及微服务架构的兴起，让众多开源项目开始关注在松耦合的架构前提下，如何基于 Docker 实现一套真正可动态扩展的服务架构。</p>
+<p>这里我们使用 Registrator + Consul + Consul-template + Nginx 这几个开源组件来实现可动态扩展的服务注册与发现机制，当然，毫无疑问他们都跑在docker上。</p>
+<p>首先看看流程：</p>
+<p><img src="https://gitee.com/xoxoyun/img/raw/master/image/20170727173023209.jpg"></p>
+<p>服务注册中心：作为整个架构中的核心，要支持分布式、持久化存储，注册信息变动实时通知消费者。</p>
+<p>服务提供者：服务以 docker 容器化方式部署（实现服务端口的动态生成），并以 docker-compose 的方式来管理，通过 Registrator 可以检测到docker进程信息以完成服务的自动注册。</p>
+<p>服务消费者：要使用服务提供者提供的服务，和服务提供者往往是动态相互转位置的。</p>
+<ol>
+<li>服务注册：服务提供者到注册中心注册；</li>
+<li>服务订阅：服务消费者到注册中心订阅服务信息，对其进行监听；</li>
+<li>缓存：本地缓存服务列表，减少与注册中心的网络通信；</li>
+<li>服务调用：先查找本地缓存，找不到再去注册中心拉取服务地址，然后发送服务请求；</li>
+<li>变更通知：服务节点变动时（新增、删除等），注册中心将通知监听节点，更新服务信息。</li>
+</ol>
+<h1 id="2-工具介绍"><a href="#2-工具介绍" class="headerlink" title="2. 工具介绍"></a>2. 工具介绍</h1><h2 id="2-1-Registrator"><a href="#2-1-Registrator" class="headerlink" title="2.1 Registrator"></a>2.1 Registrator</h2><p>Registrator：一个由Go语言编写的，针对docker使用的，通过检查本机容器进程在线或者停止运行状态，去注册服务的工具。所以我们要做的实验，所有的工具都是在docker上运行的，就是因为registrator是通过检查docker容器的状态来判断服务状态的，这样就和我们的代码实现完全解耦了，对上层透明化，无感知。它有如下特点</p>
+<ul>
+<li>通过docker socket直接监听容器event，根据容器启动/停止等event来注册/注销服务</li>
+<li>每个容器的每个exposed端口对应不同的服务</li>
+<li>支持可插拔的registry backend，默认支持Consul, etcd and SkyDNS</li>
+<li>自身也是docker化的，可以容器方式启动</li>
+<li>用户可自定义配置，如服务TTL（time-to-live）、服务名称、服务tag等</li>
+</ul>
+<h2 id="2-1-consul"><a href="#2-1-consul" class="headerlink" title="2.1 consul"></a>2.1 consul</h2><p>我们上图所说的服务注册中心，就是这玩意。Consul 是一个分布式高可用的服务发现和配置共享的软件。由 HashiCorp 公司用 Go 语言开发。</p>
+<p>Consul在这里用来做 docker 实例的注册与配置共享。</p>
+<p>特点：</p>
+<ul>
+<li>一致性协议采用 Raft 算法，比Paxos算法好用. 使用 GOSSIP 协议管理成员和广播消息, 并且支持 ACL 访问控制.</li>
+<li>支持多数据中心以避免单点故障，内外网的服务采用不同的端口进行监听。而其部署则需要考虑网络延迟, 分片等情况等.zookeeper 和 etcd 均不提供多数据中心功能的支持.</li>
+<li>健康检查. etcd 没有的.</li>
+<li>支持 http 和 dns 协议接口. zookeeper 的集成较为复杂, etcd 只支持 http 协议.</li>
+<li>还有一个web管理界面。</li>
+</ul>
+<h2 id="2-3-consul-template"><a href="#2-3-consul-template" class="headerlink" title="2.3 consul-template"></a>2.3 consul-template</h2><p>一开始构建服务发现，大多采用的是zookeeper/etcd+confd。但是复杂难用。consul-template，大概取代了confd的位置，以后可以这样etcd+confd或者consul+consul-template。</p>
+<p>consul template的使用场景：consul template可以查询consul中的服务目录、key、key-values等。这种强大的抽象功能和查询语言模板可以使consul template特别适合动态的创建配置文件。例如：创建apache/nginx proxy balancers、haproxy backends、varnish servers、application configurations。</p>
+<p>consul-template提供了一个便捷的方式从consul中获取存储的值，consul-template守护进程会查询consul服务，来更新系统上指定的任何模板，当更新完成后，模板可以选择运行一些任意的命令，比如我们这里用它来更新nginx.conf这个配置文件，然后执行nginx -s reload命令，以更新路由，达到动态调节负载均衡的目的。</p>
+<blockquote>
+<p>consul-template和nginx必须装到一台机器，因为consul-template需要动态修改nginx配置文件</p>
+</blockquote>
+<h2 id="2-4-nginx"><a href="#2-4-nginx" class="headerlink" title="2.4 nginx"></a>2.4 nginx</h2><p>这个耳熟能详的名字，不用过多介绍了，它在这里就是做负载均衡，转发请求用的。当然最擅长负载均衡的是直接用硬件，软件做性能比不上。但软件成本低、维护方便。</p>
+<h1 id="3-单机实验"><a href="#3-单机实验" class="headerlink" title="3. 单机实验"></a>3. 单机实验</h1><p>首先看一个简单的传统负载均衡web服务</p>
+<p><img src="https://gitee.com/xoxoyun/img/raw/master/image/20170726184320855.jpg" alt="load balance web servers"></p>
+<p>这个很好理解吧，client访问nginx，然后被转发到后端某一个web server上，传统的负载均衡。如果后端有添加/删除web server，运维手动改下nginx.conf，然后重新载入配置，就可以调整负载均衡了。</p>
+<p>再看看我们基于微服务自动注册和发现模式下的负载均衡：</p>
+<p><img src="https://gitee.com/xoxoyun/img/raw/master/image/20170726184628328.jpg" alt="Servies register and find"></p>
+<p>负载均衡的方式没有变，只是多了一些外围的组件，当然这些组件对client是不可见的，client依然只能看到nginx入口，访问方式也没变化。</p>
+<p>其中，我们用registrator来监控每个web server的状态。当有新的web server启动的时候，registrator会把它注册到consul这个注册中心上。由于consul_template已经订阅了该注册中心上的服务消息，此时consul注册中心会将新的web server信息推送给consul_template，consul_template则会去修改nginx.conf的配置文件，然后让nginx重新载入配置以达到自动修改负载均衡的目的。同样当一个web server挂了，registrator也能感知到，进而通知consul做出响应。</p>
+<p>整个过程不需要运维人工的干预，自动完成。接下来我们找一台机器上实践下这个方案</p>
+<h2 id="3-1-环境"><a href="#3-1-环境" class="headerlink" title="3.1 环境"></a>3.1 环境</h2><table>
+<thead>
+<tr>
+<th>header</th>
+<th>header</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>操作系统</td>
+<td>ubuntu：16.04 x86_64，内核：4.8.0-58-generic</td>
+</tr>
+<tr>
+<td>主机ip</td>
+<td>10.111.152.136</td>
+</tr>
+<tr>
+<td>docker</td>
+<td>Docker version 1.12.6, build 78d1802</td>
+</tr>
+<tr>
+<td>docker-compose</td>
+<td>docker-compose version 1.8.0, build unknown</td>
+</tr>
+</tbody></table>
+<p>首先安装 docker 和 docker-compose</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ apt-get install docker docker-compose -y1</span><br></pre></td></tr></table></figure>
+
+<p>随便找个目录，创建模板文件 docker-compose.yml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">#backend web application, scale this with docker-compose scale web&#x3D;3</span><br><span class="line">web:</span><br><span class="line">  image: liberalman&#x2F;helloworld:latest</span><br><span class="line">  environment:</span><br><span class="line">    SERVICE_80_NAME: my-web-server</span><br><span class="line">    SERVICE_TAGS: backend-1</span><br><span class="line">    MY_HOST: host-1</span><br><span class="line">  ports:</span><br><span class="line">  - &quot;80&quot;</span><br><span class="line"></span><br><span class="line">#load balancer will automatically update the config using consul-template</span><br><span class="line">lb:</span><br><span class="line">  image: liberalman&#x2F;nginx-consul-template:latest</span><br><span class="line">  hostname: lb</span><br><span class="line">  links:</span><br><span class="line">  - consulserver:consul</span><br><span class="line">  ports:</span><br><span class="line">  - &quot;80:80&quot;</span><br><span class="line"></span><br><span class="line">consulserver:</span><br><span class="line">  image: progrium&#x2F;consul:latest</span><br><span class="line">  environment:</span><br><span class="line">    SERVICE_TAGS: consul servers</span><br><span class="line">  hostname: consulserver</span><br><span class="line">  ports:</span><br><span class="line">  - &quot;8300&quot;</span><br><span class="line">  - &quot;8400&quot;</span><br><span class="line">  - &quot;8500:8500&quot;</span><br><span class="line">  - &quot;53&quot;</span><br><span class="line">  command: -server -ui-dir &#x2F;ui -data-dir &#x2F;tmp&#x2F;consul -bootstrap-expect 1</span><br><span class="line"></span><br><span class="line"># listen on local docker sock to register the container with public ports to the consul service</span><br><span class="line">registrator:</span><br><span class="line">  image: gliderlabs&#x2F;registrator:master</span><br><span class="line">  hostname: registrator</span><br><span class="line">  links:</span><br><span class="line">  - consulserver:consul</span><br><span class="line">  volumes:</span><br><span class="line">  - &quot;&#x2F;var&#x2F;run&#x2F;docker.sock:&#x2F;tmp&#x2F;docker.sock&quot;</span><br><span class="line">  command: -internal consul:&#x2F;&#x2F;consul:850012345678910111213141516171819202122232425262728293031323334353637383940</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>注意：</strong> liberalman/helloworld和liberalman/nginx-consul-template这两个镜像我已经实现了，可以pull下来，大家可以直接使用。想要看他们怎么写的，访问<a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/liberalman">https://github.com/liberalman</a></p>
+</blockquote>
+<h2 id="3-2-启动"><a href="#3-2-启动" class="headerlink" title="3.2 启动"></a>3.2 启动</h2><p>进入模板所在目录，执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker-compose up1</span><br></pre></td></tr></table></figure>
+
+<p>没问题的话就启动成功了，其中的镜像自动被下。访问 <a target="_blank" rel="noopener external nofollow noreferrer" href="http://localhost/">http://localhost</a> 可以看到一个 web 页面：</p>
+<p>Hello World! I’m host-1 addr:172.17.0.2. I saw that you are 172.17.0.6:35612.</p>
+<p>这个内容实际是后端web服务器helloworld所反馈的页面，它告诉我们它自己的地址是172.17.0.2(docker的内网地址)，它所看到的前端访问过来的ip是172.17.0.6，实际上这个前端是我们的nginx的负载均衡的代理转发的，所以它看到的实际是nginx的地址。</p>
+<p>这里的host-1是我自己设置的物理机的名称，注释不是操作系统那hostname，纯粹是为了在页面上好显示，以及后期多个物理机实验的时候好区分不同物理机器，所以自定义了一个临时名称。它对应docker-compose.yml中的MY_HOST环境变量，会通过docker容器传递到helloworld的运行环境中。</p>
+<p>要停止服务Ctrl + C就行了，如果有些没有停止，则</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker-compose down1</span><br></pre></td></tr></table></figure>
+
+<p>如果要在后台运行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker-compose up -d1</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-3-负载均衡"><a href="#3-3-负载均衡" class="headerlink" title="3.3 负载均衡"></a>3.3 负载均衡</h2><p>回到正题，在浏览器上多次刷新，可以看到后端地址没有变化，这是因为只有一个 web 后端服务器。</p>
+<p>如果要测试一下nginx负载均衡的效果，则调整后端为 3 个服务器。先停掉服务，然后</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ docker-compose scale web&#x3D;3</span><br><span class="line">$ docker-compose up12</span><br></pre></td></tr></table></figure>
+
+<p>再次访问 <a target="_blank" rel="noopener external nofollow noreferrer" href="http://localhost/">http://localhost</a> ，多次刷新，可以看到页面的实际目标地址发生了变化，有3个ip轮换。新启动的 web 后端服务器被自动注册，并且 nginx 也把新的路由添加上了：</p>
+<p>Hello World! I’m host-1 addr:172.17.0.2. I saw that you are 172.17.0.6:36710.<br>Hello World! I’m host-1 addr:172.17.0.3. I saw that you are 172.17.0.6:35210.<br>Hello World! I’m host-1 addr:172.17.0.4. I saw that you are 172.17.0.6:58678.</p>
+<h2 id="3-4-查看服务状态"><a href="#3-4-查看服务状态" class="headerlink" title="3.4 查看服务状态"></a>3.4 查看服务状态</h2><p>要查看节点注册状况，到 <a target="_blank" rel="noopener external nofollow noreferrer" href="http://localhost:8500/">http://localhost:8500</a> 可以看到 consul web ui 的管理端</p>
+<p><img src="https://gitee.com/xoxoyun/img/raw/master/image/20170719193700713.jpg" alt="consul ui"></p>
+<p>点击SERVICES这个按钮，列出所有被注册的服务。</p>
+<ul>
+<li>consul server，看到有多个是因为监听多个端口，还有udp端口的。</li>
+<li>my-web-server就是后端web服务，这个名称是要在docker-compose模板中设置SERVICE_80_NAME这个变量的，针对80端口，详情见registrator 用户指导手册<br><a target="_blank" rel="noopener external nofollow noreferrer" href="https://gliderlabs.com/registrator/latest/user/services/%E3%80%82">https://gliderlabs.com/registrator/latest/user/services/。</a></li>
+<li>nginx-consul-template就是nginx和consul-template的合体服务。</li>
+</ul>
+<p>点击my-web-server，可以看到它右侧的服务节点数，这里只有一个，有多个的话会依次列出</p>
+<p><img src="https://gitee.com/xoxoyun/img/raw/master/image/20170719195857208.jpg" alt="host-1 my-web-server"></p>
+<h1 id="4-两台物理机"><a href="#4-两台物理机" class="headerlink" title="4. 两台物理机"></a>4. 两台物理机</h1><p>以上都是在单台物理机上完成的，下面我们要测试下多台物理机情况下，真正分布式的效果。</p>
+<table>
+<thead>
+<tr>
+<th>host name</th>
+<th>real ip</th>
+<th>services</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>host-1</td>
+<td>10.111.152.136</td>
+<td>registrator、helloworld、consul-server、consul-template、nginx</td>
+</tr>
+<tr>
+<td>host-2</td>
+<td>10.111.152.135</td>
+<td>registrator、helloworld</td>
+</tr>
+</tbody></table>
+<p>第一台物理机host-1的docker-compse.yml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">#backend web application, scale this with docker-compose scale web&#x3D;3</span><br><span class="line">web:</span><br><span class="line">  image: liberalman&#x2F;helloworld:latest</span><br><span class="line">  environment:</span><br><span class="line">    SERVICE_80_NAME: my-web-server</span><br><span class="line">    SERVICE_TAGS: backend-1</span><br><span class="line">    MY_HOST: host-1</span><br><span class="line">  ports:</span><br><span class="line">  - &quot;80&quot;</span><br><span class="line"></span><br><span class="line">#load balancer will automatically update the config using consul-template</span><br><span class="line">lb:</span><br><span class="line">  image: liberalman&#x2F;nginx-consul-template:latest</span><br><span class="line">  hostname: lb</span><br><span class="line">  links:</span><br><span class="line">  - consulserver:consul</span><br><span class="line">  ports:</span><br><span class="line">  - &quot;80:80&quot;</span><br><span class="line"></span><br><span class="line">consulserver:</span><br><span class="line">  image: progrium&#x2F;consul:latest</span><br><span class="line">  environment:</span><br><span class="line">    SERVICE_TAGS: consul servers</span><br><span class="line">  hostname: consulserver-node1</span><br><span class="line">  ports:</span><br><span class="line">  - &quot;8300&quot;</span><br><span class="line">  - &quot;8400&quot;</span><br><span class="line">  - &quot;8500:8500&quot;</span><br><span class="line">  - &quot;53&quot;</span><br><span class="line">  command: -server -ui-dir &#x2F;ui -data-dir &#x2F;tmp&#x2F;consul -bootstrap-expect 1</span><br><span class="line"></span><br><span class="line"># listen on local docker sock to register the container with public ports to the consul service</span><br><span class="line">registrator:</span><br><span class="line">  image: gliderlabs&#x2F;registrator:master</span><br><span class="line">  hostname: registrator-1</span><br><span class="line">  volumes:</span><br><span class="line">  - &quot;&#x2F;var&#x2F;run&#x2F;docker.sock:&#x2F;tmp&#x2F;docker.sock&quot;</span><br><span class="line">  command: -ip&#x3D;10.111.152.136 consul:&#x2F;&#x2F;10.111.152.136:85001234567891011121314151617181920212223242526272829303132333435363738</span><br></pre></td></tr></table></figure>
+
+<p>我们第二台机器host-2的yml文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">#backend web application, scale this with docker-compose scale web&#x3D;3</span><br><span class="line">web:</span><br><span class="line">  image: liberalman&#x2F;helloworld:latest</span><br><span class="line">  environment:</span><br><span class="line">    SERVICE_80_NAME: my-web-server</span><br><span class="line">    SERVICE_TAGS: backend-2</span><br><span class="line">    MY_HOST: host-2</span><br><span class="line">  ports:</span><br><span class="line">  - &quot;80&quot;</span><br><span class="line"></span><br><span class="line"># listen on local docker sock to register the container with public ports to the consul service</span><br><span class="line">registrator:</span><br><span class="line">  image: gliderlabs&#x2F;registrator:master</span><br><span class="line">  hostname: registrator-2</span><br><span class="line">  volumes:</span><br><span class="line">  - &quot;&#x2F;var&#x2F;run&#x2F;docker.sock:&#x2F;tmp&#x2F;docker.sock&quot;</span><br><span class="line">  command: -ip 10.111.152.135 consul:&#x2F;&#x2F;10.111.152.136:85001234567891011121314151617</span><br></pre></td></tr></table></figure>
+
+<p>这是我们将MY_HOST改为host-2了，以便在页面查看的时候可以直观看到。另外的重要改变就是registrator的启动参数，我们去掉了上报docker内部ip的-internal，转而使用了外部ip，将自己本机的ip 10.111.152.135上报了。同时要访问的consul服务器参数配置成host-1的ip地址 10.111.152.136。还有registrator的hostname要和第一台机器的区别开，我改成registrator-2了，这样在注册到consul中的时候，不会覆盖掉。hostname一样consul无法区分是哪个机器的，这样两个机器的registrator会相互覆盖。</p>
+<p>host-1启动方式不变，我们现在到host-2上启动，看看效果，是否新节点被加上了。</p>
+<p>Hello World! I’m host-1 addr:172.17.0.2. I saw that you are 172.17.0.5:41464.</p>
+<p>Hello World! I’m host-2 addr:172.17.0.2. I saw that you are 10.111.152.136:41578.</p>
+<p>刷新两次，发现一会儿是host-1，一会儿是host-2，说明我们host-2物理机上的服务被添加进来了，并且被nginx路由到了。</p>
+<p>同时consul ui，看到新的节点果然被添加上了</p>
+<p><img src="https://gitee.com/xoxoyun/img/raw/master/image/20170719195631318.jpg" alt="host-2 my-web-server"></p>
+<p>不过发现个问题，如果在host-2上先将registrator关闭，再关闭host-2上的后端web，我们的consul服务器可以感知到，但是那个consul ui界面没更新，依然显示两个节点。</p>
+<h1 id="5-Consul-Cluster"><a href="#5-Consul-Cluster" class="headerlink" title="5. Consul Cluster"></a>5. Consul Cluster</h1><p>以上我们的实验其实是个单点的consul服务，点击consul ui页面的NODES按钮可以看到</p>
+<p><img src="https://gitee.com/xoxoyun/img/raw/master/image/20170719191250809.jpg" alt="single node"></p>
+<p>只有一个consul server节点，也就是在我们host-1上跑的节点consulserver，另外一个物理机上没有运行consul节点。一旦它挂了整个服务注册功能就歇菜了。既然是分布式，一定要发挥集群的优势以解决单点问题。所以，我们要建立Consul Cluster。</p>
+<p>在Consul方案中，每个提供服务的节点上都要部署和运行一个agent，所有运行Consul agent节点的集合构成Consul Cluster。</p>
+<p>Consul agent有两种运行模式：Server和Client。这里的Server和Client只是Consul集群层面的区分，与搭建在Cluster之上的应用服务无关。</p>
+<p>以Server模式运行的Consul agent节点用于维护Consul集群的状态，官方建议每个Consul Cluster至少有3个或以上的运行在Server mode的Agent，Client节点不限。</p>
+<p><img src="https://gitee.com/xoxoyun/img/raw/master/image/96681-82229e2c44b6e6ba.png" alt="这里写图片描述"></p>
+<p>每个数据中心的Consul Cluster都会在运行于server模式下的agent节点中选出一个Leader节点，这个选举过程通过Consul实现的raft协议保证，多个 server节点上的Consul数据信息是强一致的。处于client mode的Consul agent节点比较简单，无状态，仅仅负责将请求转发给Server agent节点。</p>
+<p>我们这次的架构有些调整，绘制一个服务器的逻辑上的部署图来说明下</p>
+<p><img src="https://gitee.com/xoxoyun/img/raw/master/image/20170727170455270.jpg" alt="Services register adn find, consul cluster"></p>
+<p>这是一张逻辑上服务部署的图，我们找3台机器来实验。每台机器上部署几个web server，一个registrator和一个consul client，这是基本需求。另外再建立一个consul cluster集群，用来当我们的注册中心。当web server启动后，被registrator感知，进而将注册信息发送给consul client，consul client则访问注册中心的leader节点，上报新加入的服务信息。consul cluster会将新的服务信息推送给已经到它这里订阅了服务消息的consul-template，consul-template再去修改和自己同一台机器上的nginx，以达到动态调整负载均衡的目的。</p>
+<blockquote>
+<p>注意：由于资源有限，我们没有单独使用机器去搭建consul集群，所以图中的consul client和consul server节点其实是同一个节点，因为server模式同时可以提供client的功能嘛。那个consul cluster集群其实是分布到3个host中建立起来的，我们就在3个host中分别启动一个consul进程，每个都同时担任server和client的功能。</p>
+</blockquote>
+<h2 id="5-1-配置"><a href="#5-1-配置" class="headerlink" title="5.1 配置"></a>5.1 配置</h2><table>
+<thead>
+<tr>
+<th>host name</th>
+<th>real ip</th>
+<th>services</th>
+<th>note</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>host-1</td>
+<td>10.111.152.136</td>
+<td>registrator、helloworld*n、consul-server、consul-template、nginx</td>
+<td>放置consol web ui和nginx负载均衡</td>
+</tr>
+<tr>
+<td>host-2</td>
+<td>10.111.152.135</td>
+<td>registrator、helloworld*n、consul-server</td>
+<td></td>
+</tr>
+<tr>
+<td>host-3</td>
+<td>10.111.152.168</td>
+<td>registrator、helloworld*n、consul-server</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>host-1作为运行负载均衡的机器，部署consul-template和nginx。每个机器上都部署了consul-server节点，也就是我们有3个节点，接下来就研究这3个节点是如何选举leader的。</p>
+<p><strong>host-1的docker-compose.yml文件</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">#backend web application, scale this with docker-compose scale web&#x3D;3</span><br><span class="line">web:</span><br><span class="line">  image: liberalman&#x2F;helloworld:latest</span><br><span class="line">  environment:</span><br><span class="line">    SERVICE_80_NAME: my-web-server</span><br><span class="line">    SERVICE_TAGS: backend-1</span><br><span class="line">    MY_HOST: host-1</span><br><span class="line">  ports:</span><br><span class="line">  - &quot;80&quot;</span><br><span class="line"></span><br><span class="line">#load balancer will automatically update the config using consul-template</span><br><span class="line">lb:</span><br><span class="line">  image: liberalman&#x2F;nginx-consul-template:latest</span><br><span class="line">  hostname: lb</span><br><span class="line">  links:</span><br><span class="line">  - consulserver:consul</span><br><span class="line">  ports:</span><br><span class="line">  - &quot;80:80&quot;</span><br><span class="line"></span><br><span class="line">consulserver:</span><br><span class="line">  image: progrium&#x2F;consul:latest</span><br><span class="line">  environment:</span><br><span class="line">    SERVICE_TAGS: consul servers</span><br><span class="line">  hostname: consulserver-node1</span><br><span class="line">  ports:</span><br><span class="line">  - &quot;8300:8300&quot;</span><br><span class="line">  - &quot;8301:8301&quot;</span><br><span class="line">  - &quot;8301:8301&#x2F;udp&quot;</span><br><span class="line">  - &quot;8302:8302&quot;</span><br><span class="line">  - &quot;8302:8302&#x2F;udp&quot;</span><br><span class="line">  - &quot;8400:8400&quot;</span><br><span class="line">  - &quot;8500:8500&quot;</span><br><span class="line">  - &quot;53:53&#x2F;udp&quot;</span><br><span class="line">  command: -server -ui-dir &#x2F;ui -advertise 10.111.152.136 -bootstrap-expect 3</span><br><span class="line"></span><br><span class="line"># listen on local docker sock to register the container with public ports to the consul service</span><br><span class="line">registrator:</span><br><span class="line">  image: gliderlabs&#x2F;registrator:master</span><br><span class="line">  hostname: registrator-1</span><br><span class="line">  volumes:</span><br><span class="line">  - &quot;&#x2F;var&#x2F;run&#x2F;docker.sock:&#x2F;tmp&#x2F;docker.sock&quot;</span><br><span class="line">  command: -ip 10.111.152.136 consul:&#x2F;&#x2F;10.111.152.136:8500</span><br></pre></td></tr></table></figure>
+
+<p>参数解释下</p>
+<ul>
+<li>hostname，将来consul节点都靠这个来标识了，所以每个物理机上的节点名称都要区别开，以免冲突。</li>
+<li>-bootstrap-expect 3，这个参数的作用是，当consulserver-node1节点启动之后，等待另外两个节点的加入，3个节点聚齐后，之后才开始选举leader。</li>
+<li>-advertise 10.111.152.136，如果要让节点在WAN网络中被发现，就要配置这个参数，暴露出外网ip。如果只在LAN中被发现，就不用配置这个了，默认绑定内网ip。</li>
+<li>-ui-dir /ui，这个配置是指定当前节点支持consul ui的web页面。</li>
+</ul>
+<p><strong>host-2的docker-compose.yml文件</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">#backend web application, scale this with docker-compose scale web&#x3D;3</span><br><span class="line">web:</span><br><span class="line">  image: liberalman&#x2F;helloworld:latest</span><br><span class="line">  environment:</span><br><span class="line">    SERVICE_80_NAME: my-web-server</span><br><span class="line">    SERVICE_TAGS: backend-2</span><br><span class="line">    MY_HOST: host-2</span><br><span class="line">  ports:</span><br><span class="line">  - &quot;80&quot;</span><br><span class="line"></span><br><span class="line">consulserver:</span><br><span class="line">  image: progrium&#x2F;consul:latest</span><br><span class="line">  environment:</span><br><span class="line">    SERVICE_TAGS: consul servers</span><br><span class="line">  hostname: consulserver-node2</span><br><span class="line">  ports:</span><br><span class="line">  - &quot;8300:8300&quot;</span><br><span class="line">  - &quot;8301:8301&quot;</span><br><span class="line">  - &quot;8301:8301&#x2F;udp&quot;</span><br><span class="line">  - &quot;8302:8302&quot;</span><br><span class="line">  - &quot;8302:8302&#x2F;udp&quot;</span><br><span class="line">  - &quot;8400:8400&quot;</span><br><span class="line">  - &quot;8500:8500&quot;</span><br><span class="line">  - &quot;53:53&#x2F;udp&quot;</span><br><span class="line">  command: -server -advertise 10.111.152.135  -join 10.111.152.136</span><br><span class="line"></span><br><span class="line"># listen on local docker sock to register the container with public ports to the consul service</span><br><span class="line">registrator:</span><br><span class="line">  image: gliderlabs&#x2F;registrator:master</span><br><span class="line">  hostname: registrator-2</span><br><span class="line">  volumes:</span><br><span class="line">  - &quot;&#x2F;var&#x2F;run&#x2F;docker.sock:&#x2F;tmp&#x2F;docker.sock&quot;</span><br><span class="line">  command:  -ip 10.111.152.135 consul:&#x2F;&#x2F;10.111.152.136:8500</span><br></pre></td></tr></table></figure>
+
+<p>与host-1不同的是，host-2使用了参数<br>-join 10.111.152.136 意思是把本节点加入到10.111.152.136这个ip的节点中，这是consulserver-node1的地址。我们上一个host的配置中表明，consulserver-node1这个节点启动后，会等待另外两个节点的加入，我们这里就是加入它。</p>
+<p><strong>host-3的docker-compose.yml文件</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">#backend web application, scale this with docker-compose scale web&#x3D;3</span><br><span class="line">web:</span><br><span class="line">  image: liberalman&#x2F;helloworld:latest</span><br><span class="line">  environment:</span><br><span class="line">    SERVICE_80_NAME: my-web-server</span><br><span class="line">    SERVICE_TAGS: backend-3</span><br><span class="line">    MY_HOST: host-3</span><br><span class="line">  ports:</span><br><span class="line">  - &quot;80&quot;</span><br><span class="line"></span><br><span class="line">consulserver:</span><br><span class="line">  image: progrium&#x2F;consul:latest</span><br><span class="line">  environment:</span><br><span class="line">    SERVICE_TAGS: consul servers</span><br><span class="line">  hostname: consulserver-node3</span><br><span class="line">  ports:</span><br><span class="line">  - &quot;8300:8300&quot;</span><br><span class="line">  - &quot;8301:8301&quot;</span><br><span class="line">  - &quot;8301:8301&#x2F;udp&quot;</span><br><span class="line">  - &quot;8302:8302&quot;</span><br><span class="line">  - &quot;8302:8302&#x2F;udp&quot;</span><br><span class="line">  - &quot;8400:8400&quot;</span><br><span class="line">  - &quot;8500:8500&quot;</span><br><span class="line">  - &quot;53:53&#x2F;udp&quot;</span><br><span class="line">  command: -server -advertise 10.111.152.168 -join 10.111.152.136</span><br><span class="line"></span><br><span class="line"># listen on local docker sock to register the container with public ports to the consul service</span><br><span class="line">registrator:</span><br><span class="line">  image: gliderlabs&#x2F;registrator:master</span><br><span class="line">  hostname: registrator-3</span><br><span class="line">  volumes:</span><br><span class="line">  - &quot;&#x2F;var&#x2F;run&#x2F;docker.sock:&#x2F;tmp&#x2F;docker.sock&quot;</span><br><span class="line">  command: -ip 10.111.152.168 consul:&#x2F;&#x2F;10.111.152.136:8500</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：到这里你可能有疑问，上文的3个节点都是server节点，那client节点哪里去了，没有client节点怎么访问集群啊？我们和集群交互可是访问client，client再转发到server节点的。</p>
+<p>我们前篇也提到过，其实每个server节点，本身就具有client的功能，只是多了一些把所有的信息持久化的本地以及选举leader的功能呢，这样遇到故障，信息是可以被保留的。</p>
+<p>所以，这里我们每个主机上部署registrator的时候，配置的访问consul服务的地址也是就近访问本机上的consul节点，把它当成一个consul client访问就可以了。当然也可以单独部署一个client节点，只是我们至少要保证有3个server节点，才能完成leader选举，如果再多一台机器我会考虑专门加一个client节点。</p>
+</blockquote>
+<h2 id="5-2-启动"><a href="#5-2-启动" class="headerlink" title="5.2 启动"></a>5.2 启动</h2><p>依次在host-1、host-2和host-3上启动3个节点。注意执行docker-compose up之后，不要关闭终端，让它一直打印，后续我们还要在这里看日志，别的操作都转到新开终端上执行。访问 <a target="_blank" rel="noopener external nofollow noreferrer" href="http://10.111.152.136:8500/ui/#/dc1/nodes">http://10.111.152.136:8500/ui/#/dc1/nodes</a> 看到节点都被添加上了</p>
+<p><img src="https://gitee.com/xoxoyun/img/raw/master/image/20170727151145406.jpg" alt="这里写图片描述"></p>
+<p>除了查看ui界面外，也可以使用命令行看看有哪些服务注册了，在新终端下执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">~# curl 10.111.152.136:8500&#x2F;v1&#x2F;catalog&#x2F;services|jq .</span><br><span class="line">  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</span><br><span class="line">                                 Dload  Upload   Total   Spent    Left  Speed</span><br><span class="line">100   308  100   308    0     0  54892      0 --:--:-- --:--:-- --:--:-- 61600</span><br><span class="line">&#123;</span><br><span class="line">  &quot;consul&quot;: [],</span><br><span class="line">  &quot;consul-53&quot;: [</span><br><span class="line">    &quot;consul servers&quot;,</span><br><span class="line">    &quot;udp&quot;</span><br><span class="line">  ],</span><br><span class="line">  &quot;consul-8300&quot;: [</span><br><span class="line">    &quot;consul servers&quot;</span><br><span class="line">  ],</span><br><span class="line">  &quot;consul-8301&quot;: [</span><br><span class="line">    &quot;consul servers&quot;,</span><br><span class="line">    &quot;udp&quot;</span><br><span class="line">  ],</span><br><span class="line">  &quot;consul-8302&quot;: [</span><br><span class="line">    &quot;consul servers&quot;,</span><br><span class="line">    &quot;udp&quot;</span><br><span class="line">  ],</span><br><span class="line">  &quot;consul-8400&quot;: [</span><br><span class="line">    &quot;consul servers&quot;</span><br><span class="line">  ],</span><br><span class="line">  &quot;consul-8500&quot;: [</span><br><span class="line">    &quot;consul servers&quot;</span><br><span class="line">  ],</span><br><span class="line">  &quot;my-web-server&quot;: [</span><br><span class="line">    &quot;backend-1&quot;,</span><br><span class="line">    &quot;backend-2&quot;,</span><br><span class="line">    &quot;backend-3&quot;</span><br><span class="line">  ],</span><br><span class="line">  &quot;nginx-consul-template&quot;: []</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>访问 <a target="_blank" rel="noopener external nofollow noreferrer" href="http://10.111.152.136/">http://10.111.152.136</a> 查看nginx负载均衡的效果，依次刷新，得到</p>
+<p>Hello World! I’m host-1 addr:172.17.0.2. I saw that you are 172.17.0.1:49728.<br>Hello World! I’m host-2 addr:172.17.0.3. I saw that you are 10.111.152.136:54640.<br>Hello World! I’m host-3 addr:172.17.0.3. I saw that you are 10.111.152.136:58660.</p>
+<p>OK，看起来一切正常。那我们现在分析下到底哪个节点是leader，有节点退出会怎样？</p>
+<p>现在新开一个终端，在host-1上，执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker ps -f name&#x3D;consul1</span><br></pre></td></tr></table></figure>
+
+<p>查到consul节点的容器id是4364cd41f2ba。登录这个容器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it 4364cd41f2ba &#x2F;bin&#x2F;sh1</span><br></pre></td></tr></table></figure>
+
+<p>然后就进入容器的操作系统环境了，在该环境下执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#x2F; # consul members</span><br><span class="line">Node                Address              Status  Type    Build  Protocol  DC</span><br><span class="line">consulserver-node3  10.111.152.168:8301  alive   server  0.5.2  2         dc1</span><br><span class="line">consulserver-node1  10.111.152.136:8301  alive   server  0.5.2  2         dc1</span><br><span class="line">consulserver-node2  10.111.152.135:8301  alive   server  0.5.2  2         dc112345</span><br></pre></td></tr></table></figure>
+
+<p>一目了然的看到了我们的3个consul节点。查看当前节点信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&#x2F; # consul info</span><br><span class="line">......</span><br><span class="line">consul:</span><br><span class="line">        bootstrap &#x3D; false</span><br><span class="line">        known_datacenters &#x3D; 1</span><br><span class="line">        leader &#x3D; false</span><br><span class="line">        server &#x3D; true</span><br><span class="line">raft:</span><br><span class="line">        applied_index &#x3D; 192</span><br><span class="line">        commit_index &#x3D; 192</span><br><span class="line">        fsm_pending &#x3D; 0</span><br><span class="line">        last_contact &#x3D; 15.960533ms</span><br><span class="line">        last_log_index &#x3D; 192</span><br><span class="line">        last_log_term &#x3D; 2</span><br><span class="line">        last_snapshot_index &#x3D; 0</span><br><span class="line">        last_snapshot_term &#x3D; 0</span><br><span class="line">        num_peers &#x3D; 2</span><br><span class="line">        state &#x3D; Follower</span><br><span class="line">        term &#x3D; 2</span><br><span class="line">......1234567891011121314151617181920</span><br></pre></td></tr></table></figure>
+
+<p>输出信息很多，省略掉，只给出重要的。server = true确实是server节点。看到leader=false，说明这个节点不是leader。state = Follower，看来确实是个Follower节点哦。last_contact = 15.960533ms心跳剩余时间，term = 2说是第二个term，已经选过2回了。</p>
+<p>执行上述命令的同时，由于之前在host-1上执行docker-compose up命令的时候，日志是直接输出到屏幕上的，我们此时可以节点1输出的日志</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">consulserver_1  |     2017&#x2F;07&#x2F;26 05:08:20 [INFO] agent.rpc: Accepted client: 127.0.0.1:47084</span><br><span class="line">consulserver_1  |     2017&#x2F;07&#x2F;26 05:08:24 [INFO] agent.rpc: Accepted client: 127.0.0.1:47086</span><br><span class="line">......123</span><br></pre></td></tr></table></figure>
+
+<p>我们刚才执行的命令都是客户端发到当前consul server上的。</p>
+<p>同样的方式，在节点在conserver-node3上</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">consul:</span><br><span class="line">        bootstrap &#x3D; false</span><br><span class="line">        known_datacenters &#x3D; 1</span><br><span class="line">        leader &#x3D; true</span><br><span class="line">        server &#x3D; true12345</span><br></pre></td></tr></table></figure>
+
+<p>原来leader是节点3.</p>
+<h2 id="5-3-去掉节点"><a href="#5-3-去掉节点" class="headerlink" title="5.3 去掉节点"></a>5.3 去掉节点</h2><p>让一个节点挂掉，看看会发生什么。</p>
+<h3 id="5-3-1-关闭一个节点"><a href="#5-3-1-关闭一个节点" class="headerlink" title="5.3.1 关闭一个节点"></a>5.3.1 关闭一个节点</h3><p>在host-1上新开终端执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker stop 4364cd41f2ba1</span><br></pre></td></tr></table></figure>
+
+<p>看到host-1的日志滚动</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">gocode_consulserver_1 exited with code 1</span><br><span class="line">lb_1            | 2017&#x2F;07&#x2F;26 06:02:51.211894 [WARN] (view) health.service(my-web-server|passing): Get http:&#x2F;&#x2F;consul:8500&#x2F;v1&#x2F;health&#x2F;service&#x2F;my-web-server?index&#x3D;40&amp;passing&#x3D;1&amp;stale&#x3D;&amp;wait&#x3D;60000ms: dial tcp 172.17.0.4:8500: i&#x2F;o timeout (retry attempt 1 after &quot;250ms&quot;)</span><br><span class="line">ex&#x3D;40&amp;passing&#x3D;1&amp;stale&#x3D;&amp;wait&#x3D;60000ms: dial tcp 172.17.0.4:8500: i&#x2F;o timeout (retry attempt 1 after &quot;250ms&quot;)</span><br><span class="line">lb_1            | 2017&#x2F;07&#x2F;26 06:03:10.099572 [WARN] (view) health.service(my-web-server|passing): Get http:&#x2F;&#x2F;consul:8500&#x2F;v1&#x2F;health&#x2F;service&#x2F;my-web-server?index&#x3D;40&amp;passing&#x3D;1&amp;stale&#x3D;&amp;wait&#x3D;60000ms: dial tcp 172.17.0.4:8500: getsockopt: no route to host (retry attempt 2 after &quot;500ms&quot;)</span><br><span class="line">......12345</span><br></pre></td></tr></table></figure>
+
+<p>lb_1会不断的打印重试到<a target="_blank" rel="noopener external nofollow noreferrer" href="http://consul:8500/">http://consul:8500</a>的健康检查。</p>
+<p>不过此时访问 <a target="_blank" rel="noopener external nofollow noreferrer" href="http://10.111.152.136/">http://10.111.152.136</a> 发现nginx并没有被破坏，还是可以正常路由到后端三个节点的，后端的web server也正常可用。没有受到一个consul server节点挂掉的影响。</p>
+<p>只是consul web ui无法访问了，<a target="_blank" rel="noopener external nofollow noreferrer" href="http://10.111.152.136:8500/ui/#/dc1/services">http://10.111.152.136:8500/ui/#/dc1/services</a> 因为刚好把这个节点停掉了。</p>
+<p>另外两个节点的日志情况</p>
+<p>host-2机器上，consulserver-node2节点，也是一个Follower状态的节点上</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">consulserver_1  |     2017&#x2F;07&#x2F;26 06:02:24 [INFO] memberlist: Suspect consulserver-node1 has failed, no acks received</span><br><span class="line">consulserver_1  |     2017&#x2F;07&#x2F;26 06:02:27 [INFO] memberlist: Suspect consulserver-node1 has failed, no acks received</span><br><span class="line">consulserver_1  |     2017&#x2F;07&#x2F;26 06:02:27 [INFO] memberlist: Marking consulserver-node1 as failed, suspect timeout reached</span><br><span class="line">consulserver_1  |     2017&#x2F;07&#x2F;26 06:02:27 [INFO] serf: EventMemberFailed: consulserver-node1 10.111.152.136</span><br><span class="line">consulserver_1  |     2017&#x2F;07&#x2F;26 06:02:27 [INFO] consul: removing server consulserver-node1 (Addr: 10.111.152.136:8300) (DC: dc1)</span><br><span class="line">consulserver_1  |     2017&#x2F;07&#x2F;26 06:03:19 [INFO] serf: attempting reconnect to consulserver-node1 10.111.152.136:8301</span><br><span class="line">consulserver_1  |     2017&#x2F;07&#x2F;26 06:03:49 [INFO] serf: attempting reconnect to consulserver-node1 10.111.152.136:8301</span><br><span class="line">consulserver_1  |     2017&#x2F;07&#x2F;26 06:05:19 [INFO] serf: attempting reconnect to consulserver-node1 10.111.152.136:8301</span><br><span class="line">......123456789</span><br></pre></td></tr></table></figure>
+
+<p>每隔30s尝试重连node1.</p>
+<p>host-3机器上，consulserver-node3节点，我们的leader</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">consulserver_1  |     2017&#x2F;07&#x2F;26 06:02:21 [INFO] raft: aborting pipeline replication to peer 10.111.152.136:8300</span><br><span class="line">consulserver_1  |     2017&#x2F;07&#x2F;26 06:02:21 [ERR] raft: Failed to AppendEntries to 10.111.152.136:8300: EOF</span><br><span class="line">consulserver_1  |     2017&#x2F;07&#x2F;26 06:02:21 [ERR] raft: Failed to heartbeat to 10.111.152.136:8300: dial tcp 10.111.152.136:8300: connection refused</span><br><span class="line">consulserver_1  |     2017&#x2F;07&#x2F;26 06:02:21 [ERR] raft: Failed to AppendEntries to 10.111.152.136:8300: dial tcp 10.111.152.136:8300: connection refused</span><br><span class="line">consulserver_1  |     2017&#x2F;07&#x2F;26 06:02:21 [ERR] raft: Failed to heartbeat to 10.111.152.136:8300: dial tcp 10.111.152.136:8300: connection refused</span><br><span class="line">consulserver_1  |     2017&#x2F;07&#x2F;26 06:02:21 [ERR] raft: Failed to AppendEntries to 10.111.152.136:8300: dial </span><br><span class="line">......1234567</span><br></pre></td></tr></table></figure>
+
+<p>也在尝试重连，而且它间隔2s就尝试一次，频率上更快。由于一直连不上，后来干脆去掉node1节点了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">consulserver_1  |     2017&#x2F;07&#x2F;26 06:02:27 [INFO] memberlist: Suspect consulserver-node1 has failed, no acks received</span><br><span class="line">consulserver_1  |     2017&#x2F;07&#x2F;26 06:02:27 [INFO] memberlist: Marking consulserver-node1 as failed, suspect timeout reached</span><br><span class="line">consulserver_1  |     2017&#x2F;07&#x2F;26 06:02:27 [INFO] serf: EventMemberFailed: consulserver-node1 10.111.152.136</span><br><span class="line">consulserver_1  |     2017&#x2F;07&#x2F;26 06:02:27 [INFO] consul: removing server consulserver-node1 (Addr: 10.111.152.136:8300) (DC: dc1)1234</span><br></pre></td></tr></table></figure>
+
+<p>不过虽然去掉了node1，但是其他节点依然没有放弃尝试重连node1。重连的操作一直都在继续中。</p>
+<h3 id="5-3-2-恢复节点"><a href="#5-3-2-恢复节点" class="headerlink" title="5.3.2 恢复节点"></a>5.3.2 恢复节点</h3><p>把刚才在host-1上关闭的容器重新启动</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker start 4364cd41f2ba1</span><br></pre></td></tr></table></figure>
+
+<p>看看3个机器都会输出什么。</p>
+<p>host-1上</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">consulserver_1  | &#x3D;&#x3D;&gt; Starting raft data migration...</span><br><span class="line">consulserver_1  | &#x3D;&#x3D;&gt; Starting Consul agent...</span><br><span class="line">consulserver_1  | &#x3D;&#x3D;&gt; Starting Consul agent RPC...</span><br><span class="line">consulserver_1  | &#x3D;&#x3D;&gt; Consul agent running!</span><br><span class="line">consulserver_1  |          Node name: &#39;consulserver-node1&#39;</span><br><span class="line">consulserver_1  |         Datacenter: &#39;dc1&#39;</span><br><span class="line">consulserver_1  |             Server: true (bootstrap: false)</span><br><span class="line">consulserver_1  |        Client Addr: 0.0.0.0 (HTTP: 8500, HTTPS: -1, DNS: 53, RPC: 8400)</span><br><span class="line">consulserver_1  |       Cluster Addr: 10.111.152.136 (LAN: 8301, WAN: 8302)</span><br><span class="line">consulserver_1  |     Gossip encrypt: false, RPC-TLS: false, TLS-Incoming: false</span><br><span class="line">consulserver_1  |              Atlas: &lt;disabled&gt;</span><br><span class="line"></span><br><span class="line">......</span><br><span class="line"></span><br><span class="line">consulserver_1  |     2017&#x2F;07&#x2F;26 06:23:11 [INFO] consul: New leader elected: consulserver-node2</span><br><span class="line">......12345678910111213141516</span><br></pre></td></tr></table></figure>
+
+<p>consulserver-node1节点又重新启动了，并且整个集群选举了新的leader上来：consulserver-node2</p>
+<p>host-2上</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">consulserver_1  |     2017&#x2F;07&#x2F;26 06:23:05 [INFO] consul: adding server consulserver-node1 (Addr: 10.111.152.136:8300) (DC: dc1)</span><br><span class="line"></span><br><span class="line">......</span><br><span class="line"></span><br><span class="line">consulserver_1  |     2017&#x2F;07&#x2F;26 06:23:11 [INFO] consul: New leader elected: consulserver-node2</span><br><span class="line">......123456</span><br></pre></td></tr></table></figure>
+
+<p>感知到了consulserver-node1的复活，并且也参与了选举，选出新leader，是自己，哈哈。</p>
+<p>host-3上</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">consulserver_1  |     2017&#x2F;07&#x2F;26 06:23:05 [INFO] consul: adding server consulserver-node1 (Addr: 10.111.152.136:8300) (DC: dc1)</span><br><span class="line"></span><br><span class="line">......</span><br><span class="line"></span><br><span class="line">consulserver_1  |     2017&#x2F;07&#x2F;26 06:23:11 [INFO] consul: New leader elected: consulserver-node2</span><br><span class="line">......123456</span><br></pre></td></tr></table></figure>
+
+<p>同样感知到了consulserver-node1的复活，并且也参与了选举，选出新leader。</p>
+<p>此时ngxin依然没受影响，web服务正常。而且consul web ui也可以正常访问了。一切都恢复如初。具体这3个节点是如何选举leader和处理节点的退出和重入的</p>
+<ul>
+<li>原文<a target="_blank" rel="noopener external nofollow noreferrer" href="https://blog.csdn.net/socho/article/details/75434733">https://blog.csdn.net/socho/article/details/75434733</a></li>
+</ul>
+<ul>
+<li>[1] 引用 <a target="_blank" rel="noopener external nofollow noreferrer" href="http://tonybai.com/2015/07/06/implement-distributed-services-registery-and-discovery-by-consul/">http://tonybai.com/2015/07/06/implement-distributed-services-registery-and-discovery-by-consul/</a></li>
+<li>[2] 引用 <a target="_blank" rel="noopener external nofollow noreferrer" href="http://alice.blog.51cto.com/707092/1896078">http://alice.blog.51cto.com/707092/1896078</a></li>
+</ul>
+<h1 id="附录："><a href="#附录：" class="headerlink" title="附录："></a>附录：</h1><p>文中架构图都是用graphviz绘制的，附上图源码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br></pre></td><td class="code"><pre><span class="line">digraph G &#123;</span><br><span class="line">    size&#x3D;&quot;6,6&quot;;</span><br><span class="line">    label&#x3D;&quot;services register&quot;</span><br><span class="line">    node [colorscheme&#x3D;paired12, color&#x3D;1, style&#x3D;filled];</span><br><span class="line">    register_center    [label&#x3D;&quot;注册中心&quot;, color&#x3D;5, shape&#x3D;&quot;record&quot;]</span><br><span class="line">    consumer    [label&#x3D;&quot;服务消费者&quot;, color&#x3D;4, shape&#x3D;&quot;record&quot;]</span><br><span class="line">    service    [label&#x3D;&quot;服务提供者&quot;, color&#x3D;2, shape&#x3D;&quot;record&quot;]</span><br><span class="line"></span><br><span class="line">    consumer -&gt; register_center [label&#x3D;&quot;2.订阅&quot;]</span><br><span class="line">    register_center -&gt; consumer [label&#x3D;&quot;5.通知&quot; style&#x3D;dashed]</span><br><span class="line"></span><br><span class="line">    consumer -&gt; service [label&#x3D;&quot;4.调用&quot;]</span><br><span class="line">    consumer -&gt; consumer [label&#x3D;&quot;3.缓存&quot; style&#x3D;dashed]</span><br><span class="line">    service -&gt; register_center [label&#x3D;&quot;1.注册&quot;]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">digraph G &#123;</span><br><span class="line">    size&#x3D;&quot;6,6&quot;;</span><br><span class="line">    label&#x3D;&quot;load balance web servers&quot;</span><br><span class="line">    node [colorscheme&#x3D;paired12, color&#x3D;1, style&#x3D;filled];</span><br><span class="line">    nginx    [label&#x3D;&quot;nginx&quot;, color&#x3D;3, shape&#x3D;&quot;record&quot;]</span><br><span class="line">    my_web_server_1    [label&#x3D;&quot;my_web_server_1&quot;, color&#x3D;4, shape&#x3D;&quot;record&quot;]</span><br><span class="line">    my_web_server_2    [label&#x3D;&quot;my_web_server_2&quot;, color&#x3D;4, shape&#x3D;&quot;record&quot;]</span><br><span class="line">    my_web_server_3    [label&#x3D;&quot;my_web_server_3&quot;, color&#x3D;4, shape&#x3D;&quot;record&quot;]</span><br><span class="line"></span><br><span class="line">    &#123;Client1 Client2 Client3&#125; -&gt; nginx [label&#x3D;&quot;访问&quot;]</span><br><span class="line"></span><br><span class="line">    nginx -&gt; &#123;my_web_server_1 my_web_server_2 my_web_server_3&#125; [label&#x3D;&quot;转发&quot;]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">digraph G &#123;</span><br><span class="line">    size&#x3D;&quot;6,6&quot;;</span><br><span class="line">    label&#x3D;&quot;Services register and find&quot;</span><br><span class="line">    node [colorscheme&#x3D;paired12, color&#x3D;1, style&#x3D;filled];</span><br><span class="line">    consul     [label&#x3D;&quot;consul&quot;, color&#x3D;1]</span><br><span class="line">    consul_template     [label&#x3D;&quot;consul_template&quot;, color&#x3D;2]</span><br><span class="line">    nginx    [label&#x3D;&quot;nginx&quot;, color&#x3D;3, shape&#x3D;&quot;record&quot;]</span><br><span class="line">    registrator    [label&#x3D;&quot;registrator&quot;, color&#x3D;5]</span><br><span class="line">    my_web_server_1    [label&#x3D;&quot;my_web_server_1&quot;, color&#x3D;4, shape&#x3D;&quot;record&quot;]</span><br><span class="line">    my_web_server_2    [label&#x3D;&quot;my_web_server_2&quot;, color&#x3D;4, shape&#x3D;&quot;record&quot;]</span><br><span class="line">    my_web_server_3    [label&#x3D;&quot;my_web_server_3&quot;, color&#x3D;4, shape&#x3D;&quot;record&quot;]</span><br><span class="line"></span><br><span class="line">    &#123;Client1 Client2 Client3&#125; -&gt; nginx [label&#x3D;&quot;访问&quot;]</span><br><span class="line">    nginx -&gt; &#123;my_web_server_1 my_web_server_2 my_web_server_3&#125; [label&#x3D;&quot;转发&quot;]</span><br><span class="line">    &#123;my_web_server_1 my_web_server_2 my_web_server_3&#125; -&gt; registrator [color&#x3D;&quot;red&quot;,style&#x3D;&quot;dashed&quot;,label&#x3D;&quot;监控&quot;]</span><br><span class="line">    registrator -&gt; consul [color&#x3D;&quot;red&quot;,style&#x3D;&quot;dashed&quot;,label&#x3D;&quot;注册&quot;]</span><br><span class="line">    consul -&gt; consul_template [dir&#x3D;both color&#x3D;red style&#x3D;&quot;dashed&quot; label&#x3D;&quot;订阅服务&quot;]</span><br><span class="line"></span><br><span class="line">    consul_template -&gt; nginx [color&#x3D;red,style&#x3D;&quot;dashed&quot;,label&#x3D;&quot;配置更新&quot;]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">digraph G &#123;</span><br><span class="line">    size&#x3D;&quot;6,6&quot;;</span><br><span class="line">    label&#x3D;&quot;Services register and find, consul cluster&quot;</span><br><span class="line">    node [colorscheme&#x3D;paired12, color&#x3D;1, style&#x3D;filled];</span><br><span class="line">    consul_node1     [label&#x3D;&quot;consul_node1(leader)&quot;, color&#x3D;7]</span><br><span class="line">    consul_node2     [label&#x3D;&quot;consul_node2&quot;, color&#x3D;7]</span><br><span class="line">    consul_node3     [label&#x3D;&quot;consul_ndoe3&quot;, color&#x3D;7]</span><br><span class="line">    consul_client1     [label&#x3D;&quot;consul_client1&quot;, color&#x3D;7]</span><br><span class="line">    consul_client2     [label&#x3D;&quot;consul_client2&quot;, color&#x3D;7]</span><br><span class="line">    consul_client3     [label&#x3D;&quot;consul_client3&quot;, color&#x3D;7]</span><br><span class="line">    consul_template     [label&#x3D;&quot;consul_template&quot;, color&#x3D;2]</span><br><span class="line">    nginx    [label&#x3D;&quot;nginx&quot;, color&#x3D;3, shape&#x3D;&quot;record&quot;]</span><br><span class="line">    registrator_1    [label&#x3D;&quot;registrator_1&quot;, color&#x3D;5]</span><br><span class="line">    registrator_2    [label&#x3D;&quot;registrator_2&quot;, color&#x3D;5]</span><br><span class="line">    registrator_3    [label&#x3D;&quot;registrator_3&quot;, color&#x3D;5]</span><br><span class="line">    my_web_server_1    [label&#x3D;&quot;my_web_server_1&quot;, color&#x3D;4, shape&#x3D;&quot;record&quot;]</span><br><span class="line">    my_web_server_2    [label&#x3D;&quot;my_web_server_2&quot;, color&#x3D;4, shape&#x3D;&quot;record&quot;]</span><br><span class="line">    my_web_server_3    [label&#x3D;&quot;my_web_server_3&quot;, color&#x3D;4, shape&#x3D;&quot;record&quot;]</span><br><span class="line">    my_web_server_4    [label&#x3D;&quot;my_web_server_4&quot;, color&#x3D;4, shape&#x3D;&quot;record&quot;]</span><br><span class="line">    my_web_server_5    [label&#x3D;&quot;my_web_server_5&quot;, color&#x3D;4, shape&#x3D;&quot;record&quot;]</span><br><span class="line">    my_web_server_6    [label&#x3D;&quot;my_web_server_6&quot;, color&#x3D;4, shape&#x3D;&quot;record&quot;]</span><br><span class="line"></span><br><span class="line">    &#123;Client1 Client2 Client3&#125; -&gt; nginx [label&#x3D;&quot;访问&quot;]</span><br><span class="line">    nginx -&gt; &#123;my_web_server_1 my_web_server_2 my_web_server_3 my_web_server_4 my_web_server_5 my_web_server_6&#125; [label&#x3D;&quot;转发&quot;]</span><br><span class="line">    &#123;my_web_server_1 my_web_server_2&#125; -&gt; registrator_1 [color&#x3D;&quot;red&quot;,style&#x3D;&quot;dashed&quot;,label&#x3D;&quot;监控&quot;]</span><br><span class="line">    &#123;my_web_server_3 my_web_server_4&#125; -&gt; registrator_2 [color&#x3D;&quot;red&quot;,style&#x3D;&quot;dashed&quot;,label&#x3D;&quot;监控&quot;]</span><br><span class="line">    &#123;my_web_server_5 my_web_server_6&#125; -&gt; registrator_3 [color&#x3D;&quot;red&quot;,style&#x3D;&quot;dashed&quot;,label&#x3D;&quot;监控&quot;]</span><br><span class="line">    registrator_1 -&gt; consul_client1 [color&#x3D;&quot;red&quot;,style&#x3D;&quot;dashed&quot;,label&#x3D;&quot;注册&quot;]</span><br><span class="line">    registrator_2 -&gt; consul_client2 [color&#x3D;&quot;red&quot;,style&#x3D;&quot;dashed&quot;,label&#x3D;&quot;注册&quot;]</span><br><span class="line">    registrator_3 -&gt; consul_client3 [color&#x3D;&quot;red&quot;,style&#x3D;&quot;dashed&quot;,label&#x3D;&quot;注册&quot;]</span><br><span class="line">    &#123;consul_client1 consul_client2 consul_client3&#125; -&gt; consul_node1 [color&#x3D;&quot;red&quot;,style&#x3D;&quot;dashed&quot;,label&#x3D;&quot;注册&quot;]</span><br><span class="line">    consul_node1 -&gt; consul_node2 -&gt; consul_node3 [dir&#x3D;both style&#x3D;dashed color&#x3D;blue]</span><br><span class="line">    consul_node1 -&gt; consul_template [dir&#x3D;both color&#x3D;red style&#x3D;&quot;dashed&quot; label&#x3D;&quot;订阅服务&quot;]</span><br><span class="line"></span><br><span class="line">    consul_template -&gt; nginx [color&#x3D;red,style&#x3D;&quot;dashed&quot;,label&#x3D;&quot;配置更新&quot;]</span><br><span class="line"></span><br><span class="line">    subgraph cluster_host_1 &#123;</span><br><span class="line">        label&#x3D;&quot;host_1&quot;</span><br><span class="line">        my_web_server_1</span><br><span class="line">        my_web_server_2</span><br><span class="line">        registrator_1</span><br><span class="line">        consul_client1</span><br><span class="line">    &#125;</span><br><span class="line">    subgraph cluster_host_2 &#123;</span><br><span class="line">        label&#x3D;&quot;host_2&quot;</span><br><span class="line">        my_web_server_3</span><br><span class="line">        my_web_server_4</span><br><span class="line">        registrator_2</span><br><span class="line">        consul_client2</span><br><span class="line">    &#125;</span><br><span class="line">    subgraph cluster_host_3 &#123;</span><br><span class="line">        label&#x3D;&quot;host_3&quot;</span><br><span class="line">        my_web_server_5</span><br><span class="line">        my_web_server_6</span><br><span class="line">        registrator_3</span><br><span class="line">        consul_client3</span><br><span class="line">    &#125;</span><br><span class="line">    subgraph cluster_clu &#123;</span><br><span class="line">        label&#x3D;&quot;consul cluster&quot;</span><br><span class="line">        consul_node1</span><br><span class="line">        consul_node2</span><br><span class="line">        consul_node3</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined" rel="external nofollow noreferrer">Thaons</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://kococ.cn/posts/39204/">https://kococ.cn/posts/39204/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://kococ.cn" target="_blank">北青永恒</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Registrator-Consul-Consul-template-nginx/">Registrator + Consul + Consul-template + nginx</a></div><div class="post_share"><div class="social-share" data-image="https://gitee.com/xoxoyun/img/raw/master/image/0058.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/posts/15965/"><img class="next-cover" src="https://gitee.com/xoxoyun/img/raw/master/image/0095.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Shell从入门到精通</div></div></a></div></nav></article></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2018 - 2020 By Thaons</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">既来之 则安之</div><div class="icp"><a target="_blank" rel="noopener external nofollow noreferrer" href="http://beian.miit.gov.cn/"><img class="icp-icon" src="https://gitee.com/xoxoyun/img/raw/master/image/icp.png"/><span>豫ICP备20001100号</span></a></div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a>
+ <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><div class="aplayer no-destroy" data-id="712292593" data-server="netease" data-type="artist" data-fixed="true" data-mini="true" data-listFolded="true" data-order="random" data-preload="none" data-autoplay="true" muted></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/gh/metowolf/MetingJS@1.2/dist/Meting.min.js"></script><script>(function(){
+  const bp = document.createElement('script');
+  const curProtocol = window.location.protocol.split(':')[0];
+  if (curProtocol === 'https'){
+  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+  }
+  else{
+  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+  }
+  bp.dataset.pjax = ''
+  const s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(bp, s);
+})()</script></div></body></html>
