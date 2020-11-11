@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>Netdata安装教程</title>
+      <link href="/posts/4238/"/>
+      <url>/posts/4238/</url>
+      
+        <content type="html"><![CDATA[<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>Netdata是一款Linux性能实时监测工具，每个服务器每秒收集数千个度量标准，只有1%的CPU利用率，一个内核，几MB内存，没有磁盘I/O。即使运行在低端硬件上，也可以在令人惊叹的实时交互式web仪表板上查看所有内容。监控数据极多，比如iptables Linux firewall、fping、Processes、NFS、Network QoS、Applications、Apache web server、Nginx、Tomcat、Mysql、postgres、redis、mongodb、elasticsearch、SNMP devices等等。很强大，特别是界面非常酷炫，有兴趣的可以试试。</p><p>官网地址：[<a href="https://my-netdata.io/][1]">https://my-netdata.io/][1]</a><br>Github地址：[<a href="https://github.com/firehol/netdata][2]">https://github.com/firehol/netdata][2]</a><br>演示地址：[<a href="https://my-netdata.io/#demosites][3]%EF%BC%88%E6%9C%898%E4%B8%AA%E5%9C%B0%E5%9D%80%EF%BC%8C%E9%9A%8F%E4%BE%BF%E7%82%B9%E4%B8%80%E4%B8%AA%E8%BF%9B%E5%8E%BB%E5%B0%B1%E5%8F%AF%E4%BB%A5%E4%BA%86%EF%BC%89">https://my-netdata.io/#demosites][3]（有8个地址，随便点一个进去就可以了）</a></p><h2 id="截图"><a href="#截图" class="headerlink" title="截图"></a>截图</h2><p>![netdata1.png][4]</p><p>![请输入图片描述][5]</p><p>![Netdata(3).png][6]</p><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><pre><code>支持Centos、Debian、Ubuntu等所有的Linux发行版，运行以下命令：#安装基本的netdatabash &lt;(curl -Ss https://my-netdata.io/kickstart.sh)#or#安装netdata及所有插件的软件包bash &lt;(curl -Ss https://my-netdata.io/kickstart.sh) all</code></pre><p><strong>安装完成后访问[<a href="http://ip:19999/][7]%E5%8D%B3%E5%8F%AF%EF%BC%81">http://ip:19999/][7]即可！</a></strong><br><strong>提示</strong>：如果要在64bit缺少软件包管理器的Linux上安装（例如CoreOS、CirrOS、busybox、systems），就运行下面这个命令，netdata将以二进制编译形式进行安装：</p><pre><code>bash &lt;(curl -Ss https://my-netdata.io/kickstart-static64.sh)</code></pre><p>如果运行不了，则需要分开运行：</p><pre><code>wget -O /tmp/kickstart-static64.sh https://my-netdata.io/kickstart-static64.shsh /tmp/kickstart-static64.sh</code></pre><p>安装详情参考：<a href="https://github.com/firehol/netdata/wiki/Installation">https://github.com/firehol/netdata/wiki/Installation</a></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Linux基础 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Netdata性能实时监测 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Thoans</title>
       <link href="/posts/21069/"/>
       <url>/posts/21069/</url>
