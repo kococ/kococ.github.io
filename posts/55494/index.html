@@ -1,0 +1,531 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>influxdb常用基础命令 | 北青永恒</title><meta name="keywords" content="这里写标签"><meta name="author" content="Thaons"><meta name="copyright" content="Thaons"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="基于新版本 v1.6.2，centOS  CLI使用HTTPAPI通过8086（默认的，可以在配置文件中修改）端口与influxDB直接交互，influx命令在所有influxDB的包中都默认包含  注意：在InfluxDB当中，并没有表（table）这个概念，取而代之的是MEASUREMENTS，MEASUREMENTS的功能与传统数据库中的表一致，因此我们也可以将MEASUREMENTS称为I">
+<meta property="og:type" content="article">
+<meta property="og:title" content="influxdb常用基础命令">
+<meta property="og:url" content="https://kococ.cn/posts/55494/index.html">
+<meta property="og:site_name" content="北青永恒">
+<meta property="og:description" content="基于新版本 v1.6.2，centOS  CLI使用HTTPAPI通过8086（默认的，可以在配置文件中修改）端口与influxDB直接交互，influx命令在所有influxDB的包中都默认包含  注意：在InfluxDB当中，并没有表（table）这个概念，取而代之的是MEASUREMENTS，MEASUREMENTS的功能与传统数据库中的表一致，因此我们也可以将MEASUREMENTS称为I">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/xoxoyun/img/raw/master/image/0071.jpg">
+<meta property="article:published_time" content="2020-11-19T06:50:27.000Z">
+<meta property="article:modified_time" content="2020-11-19T06:58:49.748Z">
+<meta property="article:author" content="Thaons">
+<meta property="article:tag" content="这里写标签">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/xoxoyun/img/raw/master/image/0071.jpg"><link rel="shortcut icon" href="https://www.kococ.cn/favicon.ico"><link rel="canonical" href="https://kococ.cn/posts/55494/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin="crossorigin"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="preconnect" href="//zz.bdstatic.com"/><meta name="yandex-verification" content="{&quot;theme_color&quot;:{&quot;enable&quot;:true,&quot;main&quot;:&quot;#49B1F5&quot;,&quot;paginator&quot;:&quot;#00c4b6&quot;,&quot;button_hover&quot;:&quot;#FF7242&quot;,&quot;text_selection&quot;:&quot;#00c4b6&quot;,&quot;link_color&quot;:&quot;#99a9bf&quot;,&quot;meta_color&quot;:&quot;#858585&quot;,&quot;hr_color&quot;:&quot;#A4D8FA&quot;,&quot;code_foreground&quot;:&quot;#F47466&quot;,&quot;code_background&quot;:&quot;rgba(27, 31, 35, .05)&quot;,&quot;toc_color&quot;:&quot;#00c4b6&quot;,&quot;blockquote_padding_color&quot;:&quot;#49b1f5&quot;,&quot;blockquote_background_color&quot;:&quot;#49b1f5&quot;}}"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  hexoversion: '5.0.0',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  ClickShowText: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isSidebar: true,
+  postUpdate: '2020-11-19 14:58:49'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {
+  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }
+})()</script><link rel="stylesheet" href="/css/footer.css"><link rel="stylesheet" href="/css/background.css"><meta name="generator" content="Hexo 5.0.0"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="https://gitee.com/xoxoyun/img/raw/master/image/wxuser.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">78</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">81</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">10</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" target="_blank" rel="noopener external nofollow noreferrer" href="https://music.kococ.cn"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page" target="_blank" rel="noopener external nofollow noreferrer" href="http://www.2020web.cn"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友联</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div id="body-wrap"><div id="sidebar"><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8influx"><span class="toc-number">1.</span> <span class="toc-text">启动influx</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#influx%E5%8F%82%E6%95%B0"><span class="toc-number">1.1.</span> <span class="toc-text">influx参数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#influx%E5%91%BD%E4%BB%A4"><span class="toc-number">1.2.</span> <span class="toc-text">influx命令</span></a></li></ol></li></ol></div></div></div><header class="post-bg" id="page-header" style="background-image: url(https://gitee.com/xoxoyun/img/raw/master/image/0071.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">北青永恒</a></span><span id="menus"><div id="search_button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" target="_blank" rel="noopener external nofollow noreferrer" href="https://music.kococ.cn"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page" target="_blank" rel="noopener external nofollow noreferrer" href="http://www.2020web.cn"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友联</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">influxdb常用基础命令</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-11-19T06:50:27.000Z" title="发表于 2020-11-19 14:50:27">2020-11-19</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2020-11-19T06:58:49.748Z" title="更新于 2020-11-19 14:58:49">2020-11-19</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%BF%99%E9%87%8C%E5%86%99%E5%88%86%E7%B1%BB/">这里写分类</a></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>13分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><p>基于新版本 v1.6.2，centOS</p>
+<p>CLI使用HTTPAPI通过8086（默认的，可以在配置文件中修改）端口与influxDB直接交互，influx命令在所有influxDB的包中都默认包含</p>
+<blockquote>
+<p>注意：在InfluxDB当中，并没有表（table）这个概念，取而代之的是MEASUREMENTS，MEASUREMENTS的功能与传统数据库中的表一致，因此我们也可以将MEASUREMENTS称为InfluxDB中的表</p>
+</blockquote>
+<h1 id="启动influx"><a href="#启动influx" class="headerlink" title="启动influx"></a>启动influx</h1><p>influx命令在/usr/bin/influx</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@test25 ~]# find &#x2F; -name influx</span><br><span class="line">&#x2F;usr&#x2F;bin&#x2F;influx</span><br><span class="line">[root@test25 ~]# </span><br></pre></td></tr></table></figure>
+
+<p>启动influxd</p>
+<ul>
+<li>service influxdb start</li>
+<li>influxd</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@test25 ~]# service influxdb start</span><br><span class="line">[root@test25 ~]# </span><br></pre></td></tr></table></figure>
+
+<h2 id="influx参数"><a href="#influx参数" class="headerlink" title="influx参数"></a>influx参数</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">[root@test25 ~]# influx --help</span><br><span class="line">Usage of influx:</span><br><span class="line">  -version</span><br><span class="line">       Display the version and exit.</span><br><span class="line">  -host &#39;host name&#39;</span><br><span class="line">       Host to connect to.</span><br><span class="line">  -port &#39;port #&#39;</span><br><span class="line">       Port to connect to.</span><br><span class="line">  -socket &#39;unix domain socket&#39;</span><br><span class="line">       Unix socket to connect to.</span><br><span class="line">  -database &#39;database name&#39;</span><br><span class="line">       Database to connect to the server.</span><br><span class="line">  -password &#39;password&#39;</span><br><span class="line">      Password to connect to the server.  Leaving blank will prompt for password (--password &#39;&#39;).</span><br><span class="line">  -username &#39;username&#39;</span><br><span class="line">       Username to connect to the server.</span><br><span class="line">  -ssl</span><br><span class="line">        Use https for requests.</span><br><span class="line">  -unsafeSsl</span><br><span class="line">        Set this when connecting to the cluster using https and not use SSL verification.</span><br><span class="line">  -execute &#39;command&#39;</span><br><span class="line">       Execute command and quit.</span><br><span class="line">  -format &#39;json|csv|column&#39;</span><br><span class="line">       Format specifies the format of the server responses:  json, csv, or column.</span><br><span class="line">  -precision &#39;rfc3339|h|m|s|ms|u|ns&#39;</span><br><span class="line">       Precision specifies the format of the timestamp:  rfc3339, h, m, s, ms, u or ns.</span><br><span class="line">  -consistency &#39;any|one|quorum|all&#39;</span><br><span class="line">       Set write consistency level: any, one, quorum, or all</span><br><span class="line">  -pretty</span><br><span class="line">       Turns on pretty print for the json format.</span><br><span class="line">  -import</span><br><span class="line">       Import a previous database export from file</span><br><span class="line">  -pps</span><br><span class="line">       How many points per second the import will allow.  By default it is zero and will not throttle importing.</span><br><span class="line">  -path</span><br><span class="line">       Path to file to import</span><br><span class="line">  -compressed</span><br><span class="line">       Set to true if the import file is compressed</span><br><span class="line"></span><br><span class="line">Examples:</span><br><span class="line"></span><br><span class="line">    # Use influx in a non-interactive mode to query the database &quot;metrics&quot; and pretty print json:</span><br><span class="line">    $ influx -database &#39;metrics&#39; -execute &#39;select * from cpu&#39; -format &#39;json&#39; -pretty</span><br><span class="line"></span><br><span class="line">    # Connect to a specific database on startup and set database context:</span><br><span class="line">    $ influx -database &#39;metrics&#39; -host &#39;localhost&#39; -port &#39;8086&#39;</span><br><span class="line">[root@test25 ~]#</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-version</td>
+<td>显示版本号并退出</td>
+</tr>
+<tr>
+<td>-host ‘host name’</td>
+<td>连接到远程主机</td>
+</tr>
+<tr>
+<td>-port ‘port #’</td>
+<td>连接远程主机端口</td>
+</tr>
+<tr>
+<td>-socket ‘unix domain socket’</td>
+<td>连接unix套接字</td>
+</tr>
+<tr>
+<td>-database ‘database name’</td>
+<td>连接到服务器的数据库</td>
+</tr>
+<tr>
+<td>-password ‘password’</td>
+<td>连接到服务器的密码</td>
+</tr>
+<tr>
+<td>-username ‘username’</td>
+<td>连接到服务器的用户名</td>
+</tr>
+<tr>
+<td>-ssl</td>
+<td>使用https请求</td>
+</tr>
+<tr>
+<td>-unsafeSsl</td>
+<td>使用https连接到集群时，不要使用SSL验证。</td>
+</tr>
+<tr>
+<td>-execute ‘command’</td>
+<td>执行命令并退出</td>
+</tr>
+<tr>
+<td>-format ‘json|csv|column’</td>
+<td>格式指定了服务器响应的格式：json、csv或column.默认是column</td>
+</tr>
+<tr>
+<td>-precision ‘rfc3339|h|m|s|ms|u|ns’</td>
+<td>指定时间戳的格式精度: rfc3339 (YYYY-MM-DDTHH:MM:SS.nnnnnnnnnZ), h (hours), m (minutes), s (seconds), ms (milliseconds), u (microseconds), ns (nanoseconds)..</td>
+</tr>
+<tr>
+<td>-consistency ‘any|one|quorum|all’</td>
+<td>设置写一致性级别: any, one, quorum, or all</td>
+</tr>
+<tr>
+<td>-pretty</td>
+<td>打开美化json打印</td>
+</tr>
+<tr>
+<td>-import</td>
+<td>导入备份的数据库文件</td>
+</tr>
+<tr>
+<td>-pps</td>
+<td>导入允许每秒多少个点。默认情况下，它是零，不会限制进口</td>
+</tr>
+<tr>
+<td>-path</td>
+<td>import的文件路径</td>
+</tr>
+<tr>
+<td>-compressed</td>
+<td>如果导入文件被压缩，则设置为true</td>
+</tr>
+</tbody></table>
+<p>给出一些demo</p>
+<ul>
+<li>显示版本 -version</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@test25 ~]# influx -version</span><br><span class="line">InfluxDB shell version: 1.6.2</span><br></pre></td></tr></table></figure>
+
+<p>连接指定主机 -host</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@test25 ~]# influx -host localhost</span><br><span class="line">Connected to http:&#x2F;&#x2F;localhost:8086 version 1.6.1</span><br><span class="line">InfluxDB shell version: 1.6.2</span><br><span class="line">&gt; quit</span><br></pre></td></tr></table></figure>
+
+<p>用使用端口连接主机 -port</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@test25 ~]# influx -host localhost -port 8086</span><br><span class="line">Connected to http:&#x2F;&#x2F;localhost:8086 version 1.6.1</span><br><span class="line">InfluxDB shell version: 1.6.2</span><br><span class="line">&gt; quit</span><br></pre></td></tr></table></figure>
+
+<p>连接指定数据库 -database</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@test25 ~]# influx -host localhost -port 8086 -database mydb</span><br><span class="line">Connected to http:&#x2F;&#x2F;localhost:8086 version 1.6.1</span><br><span class="line">InfluxDB shell version: 1.6.2</span><br><span class="line">&gt; quit</span><br></pre></td></tr></table></figure>
+
+<p>使用指定的用户名和密码(添加用户见下面) -password -username</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@test25 ~]# influx -host localhost -port 8086 -database mydb -username &#39;yueling&#39; -password &#39;123456&#39;</span><br><span class="line">Connected to http:&#x2F;&#x2F;localhost:8086 version 1.6.1</span><br><span class="line">InfluxDB shell version: 1.6.2</span><br><span class="line">&gt; </span><br></pre></td></tr></table></figure>
+
+<p>添加用户：yueling和管理员用户lingyue</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@test25 ~]# influx -database &#39;mydb&#39; -host &#39;localhost&#39; -port &#39;8086&#39;</span><br><span class="line">Connected to http:&#x2F;&#x2F;localhost:8086 version 1.6.1</span><br><span class="line">InfluxDB shell version: 1.6.2</span><br><span class="line">&gt; show users</span><br><span class="line">user admin</span><br><span class="line">---- -----</span><br><span class="line">&gt; create user &quot;yueling&quot; with password &#39;123456&#39;</span><br><span class="line">&gt; create user &quot;lingyue&quot; with password &#39;123456&#39; with all privileges</span><br><span class="line">&gt; show users</span><br><span class="line">user    admin</span><br><span class="line">----    -----</span><br><span class="line">yueling false</span><br><span class="line">lingyue true</span><br><span class="line">&gt; </span><br></pre></td></tr></table></figure>
+
+<p>执行命令并返回 -execute</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@test25 ~]# influx -host localhost -port 8086 -database mydb -username &#39;yueling&#39; -password &#39;123456&#39; -execute &#39;select * from cpu_load_short&#39;</span><br><span class="line">name: cpu_load_short</span><br><span class="line">time                direction host     region  value</span><br><span class="line">----                --------- ----     ------  -----</span><br><span class="line">1422568543702900257 in        server01 us-west 2</span><br><span class="line">1422568543702900257           server02 us-west 0.55</span><br><span class="line">1434055562000000000           server01 us-west 0.64</span><br><span class="line">1536579271011551389           server02         0.67</span><br><span class="line">[root@test25 ~]# </span><br></pre></td></tr></table></figure>
+
+<p>指定返回格式 -format</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@test25 ~]# influx -host localhost -port 8086 -database mydb -username &#39;yueling&#39; -password &#39;123456&#39; -execute &#39;select * from cpu_load_short&#39; -format json</span><br><span class="line">&#123;&quot;results&quot;:[&#123;&quot;series&quot;:[&#123;&quot;name&quot;:&quot;cpu_load_short&quot;,&quot;columns&quot;:[&quot;time&quot;,&quot;direction&quot;,&quot;host&quot;,&quot;region&quot;,&quot;value&quot;],&quot;values&quot;:[[1422568543702900257,&quot;in&quot;,&quot;server01&quot;,&quot;us-west&quot;,2],[1422568543702900257,null,&quot;server02&quot;,&quot;us-west&quot;,0.55],[1434055562000000000,null,&quot;server01&quot;,&quot;us-west&quot;,0.64],[1536579271011551389,null,&quot;server02&quot;,null,0.67]]&#125;]&#125;]&#125;</span><br><span class="line"></span><br><span class="line">[root@test25 ~]# influx -host localhost -port 8086 -database mydb -format json </span><br><span class="line">Connected to http:&#x2F;&#x2F;localhost:8086 version 1.6.1</span><br><span class="line">InfluxDB shell version: 1.6.2</span><br><span class="line">&gt; use mydb</span><br><span class="line">Using database mydb</span><br><span class="line">&gt; select * from cpu_load_short</span><br><span class="line">&#123;&quot;results&quot;:[&#123;&quot;series&quot;:[&#123;&quot;name&quot;:&quot;cpu_load_short&quot;,&quot;columns&quot;:[&quot;time&quot;,&quot;direction&quot;,&quot;host&quot;,&quot;region&quot;,&quot;value&quot;],&quot;values&quot;:[[1422568543702900257,&quot;in&quot;,&quot;server01&quot;,&quot;us-west&quot;,2],[1422568543702900257,null,&quot;server02&quot;,&quot;us-west&quot;,0.55],[1434055562000000000,null,&quot;server01&quot;,&quot;us-west&quot;,0.64],[1536579271011551389,null,&quot;server02&quot;,null,0.67]]&#125;]&#125;]&#125;</span><br><span class="line">&gt; </span><br></pre></td></tr></table></figure>
+
+<p>时间戳精度 -precision</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@test25 ~]# influx -host localhost -port 8086 -database mydb -username &#39;yueling&#39; -password &#39;123456&#39; -execute &#39;select * from cpu_load_short&#39; -format column -precision ms</span><br><span class="line">name: cpu_load_short</span><br><span class="line">time          direction host     region  value</span><br><span class="line">----          --------- ----     ------  -----</span><br><span class="line">1422568543702 in        server01 us-west 2</span><br><span class="line">1422568543702           server02 us-west 0.55</span><br><span class="line">1434055562000           server01 us-west 0.64</span><br><span class="line">1536579271011           server02         0.67</span><br></pre></td></tr></table></figure>
+
+<p>使用json美化输出 -pretty</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">[root@test25 ~]# influx -host localhost -port 8086 -database mydb -username &#39;yueling&#39; -password &#39;123456&#39; -execute &#39;select * from cpu_load_short&#39; -format json</span><br><span class="line"> -pretty</span><br><span class="line">&#123;</span><br><span class="line">    &quot;results&quot;: [</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;series&quot;: [</span><br><span class="line">                &#123;</span><br><span class="line">                    &quot;name&quot;: &quot;cpu_load_short&quot;,</span><br><span class="line">                    &quot;columns&quot;: [</span><br><span class="line">                        &quot;time&quot;,</span><br><span class="line">                        &quot;direction&quot;,</span><br><span class="line">                        &quot;host&quot;,</span><br><span class="line">                        &quot;region&quot;,</span><br><span class="line">                        &quot;value&quot;</span><br><span class="line">                    ],</span><br><span class="line">                    &quot;values&quot;: [</span><br><span class="line">                        [</span><br><span class="line">                            1422568543702900257,</span><br><span class="line">                            &quot;in&quot;,</span><br><span class="line">                            &quot;server01&quot;,</span><br><span class="line">                            &quot;us-west&quot;,</span><br><span class="line">                            2</span><br><span class="line">                        ],</span><br><span class="line">                        [</span><br><span class="line">                            1422568543702900257,</span><br><span class="line">                            null,</span><br><span class="line">                            &quot;server02&quot;,</span><br><span class="line">                            &quot;us-west&quot;,</span><br><span class="line">                            0.55</span><br><span class="line">                        ],</span><br><span class="line">                        [</span><br><span class="line">                            1434055562000000000,</span><br><span class="line">                            null,</span><br><span class="line">                            &quot;server01&quot;,</span><br><span class="line">                            &quot;us-west&quot;,</span><br><span class="line">                            0.64</span><br><span class="line">                        ],</span><br><span class="line">                        [</span><br><span class="line">                            1536579271011551389,</span><br><span class="line">                            null,</span><br><span class="line">                            &quot;server02&quot;,</span><br><span class="line">                            null,</span><br><span class="line">                            0.67</span><br><span class="line">                        ]</span><br><span class="line">                    ]</span><br><span class="line">                &#125;</span><br><span class="line">            ]</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用文件导入数据 -import</p>
+<ul>
+<li>导入的文件包含两个章节<ul>
+<li>DDL：Data Definition Language</li>
+<li>DML：Data Manipulation Language</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>注意文件里的时间戳，自己试验的时候记得修改使符合规则 比如当前时间戳 date +’%s’</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[root@test25 ~]# cat dataarr.txt </span><br><span class="line"># DDL</span><br><span class="line">CREATE DATABASE pirates</span><br><span class="line">CREATE RETENTION POLICY oneday ON pirates DURATION 1d REPLICATION 1</span><br><span class="line"></span><br><span class="line"># DML</span><br><span class="line"># CONTEXT-DATABASE: pirates</span><br><span class="line"># CONTEXT-RETENTION-POLICY: oneday</span><br><span class="line"></span><br><span class="line">treasures,captain_id&#x3D;dread_pirate_roberts value&#x3D;801 1536658695</span><br><span class="line">treasures,captain_id&#x3D;flint value&#x3D;29 1536658695</span><br><span class="line">[root@test25 ~]#</span><br><span class="line">[root@test25 ~]# influx -import -path&#x3D;dataarr.txt -precision&#x3D;s</span><br><span class="line">2018&#x2F;09&#x2F;11 17:40:39 Processed 2 commands</span><br><span class="line">2018&#x2F;09&#x2F;11 17:40:39 Processed 2 inserts</span><br><span class="line">2018&#x2F;09&#x2F;11 17:40:39 Failed 0 inserts</span><br><span class="line">[root@test25 ~]#</span><br></pre></td></tr></table></figure>
+
+<p>如果是压缩的文件 要配合 -compressed</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@test25 ~]# gzip dataarr.txt</span><br><span class="line">[root@test25 ~]# ls</span><br><span class="line">anaconda-ks.cfg  dataarr.txt.gz </span><br><span class="line">……</span><br><span class="line"></span><br><span class="line">[root@test25 ~]# influx -import -path&#x3D;dataarr.txt.gz -precision&#x3D;s -compressed</span><br><span class="line">2018&#x2F;09&#x2F;11 17:50:47 Processed 2 commands</span><br><span class="line">2018&#x2F;09&#x2F;11 17:50:47 Processed 2 inserts</span><br><span class="line">2018&#x2F;09&#x2F;11 17:50:47 Failed 0 inserts</span><br><span class="line">[root@test25 ~]#</span><br></pre></td></tr></table></figure>
+
+<h2 id="influx命令"><a href="#influx命令" class="headerlink" title="influx命令"></a>influx命令</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@test25 ~]# influx</span><br><span class="line">Connected to http:&#x2F;&#x2F;localhost:8086 version 1.6.1</span><br><span class="line">InfluxDB shell version: 1.6.2</span><br><span class="line">&gt; </span><br></pre></td></tr></table></figure>
+
+<p>查看influx内部命令用法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&gt; help</span><br><span class="line">Usage:</span><br><span class="line">        connect &lt;host:port&gt;   connects to another node specified by host:port</span><br><span class="line">        auth                  prompts for username and password</span><br><span class="line">        pretty                toggles pretty print for the json format</span><br><span class="line">        chunked               turns on chunked responses from server</span><br><span class="line">        chunk size &lt;size&gt;     sets the size of the chunked responses.  Set to 0 to reset to the default chunked size</span><br><span class="line">        use &lt;db_name&gt;         sets current database</span><br><span class="line">        format &lt;format&gt;       specifies the format of the server responses: json, csv, or column</span><br><span class="line">        precision &lt;format&gt;    specifies the format of the timestamp: rfc3339, h, m, s, ms, u or ns</span><br><span class="line">        consistency &lt;level&gt;   sets write consistency level: any, one, quorum, or all</span><br><span class="line">        history               displays command history</span><br><span class="line">        settings              outputs the current settings for the shell</span><br><span class="line">        clear                 clears settings such as database or retention policy.  run &#39;clear&#39; for help</span><br><span class="line">        exit&#x2F;quit&#x2F;ctrl+d      quits the influx shell</span><br><span class="line"></span><br><span class="line">        show databases        show database names</span><br><span class="line">        show series           show series information</span><br><span class="line">        show measurements     show measurement information</span><br><span class="line">        show tag keys         show tag key information</span><br><span class="line">        show field keys       show field key information</span><br><span class="line"></span><br><span class="line">        A full list of influxql commands can be found at:</span><br><span class="line">        https:&#x2F;&#x2F;docs.influxdata.com&#x2F;influxdb&#x2F;latest&#x2F;query_language&#x2F;spec&#x2F;</span><br><span class="line">&gt; </span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>connect <a href="host:port" rel="external nofollow noreferrer">host:port</a></td>
+<td>通过host:port连接指定服务器</td>
+</tr>
+<tr>
+<td>auth</td>
+<td>提示输入用户名和密码</td>
+</tr>
+<tr>
+<td>pretty</td>
+<td>开启/关闭美化json输出</td>
+</tr>
+<tr>
+<td>chunked</td>
+<td>开启/关闭服务器响应</td>
+</tr>
+<tr>
+<td>chunk size <size></td>
+<td>设置服务器响应的大小，设置为0则重置返回大小</td>
+</tr>
+<tr>
+<td>use <db_name></td>
+<td>切换数据库</td>
+</tr>
+<tr>
+<td>format <format></td>
+<td>指定输出格式: json, csv, or column（默认是column，当然启动的时候可以用-format指定）</td>
+</tr>
+<tr>
+<td>precision <format></td>
+<td>时间戳精度: rfc3339 (YYYY-MM-DDTHH:MM:SS.nnnnnnnnnZ), h (hours), m (minutes), s (seconds), ms (milliseconds), u (microseconds), ns (nanoseconds)</td>
+</tr>
+<tr>
+<td>consistency <level></td>
+<td>设置并发级别: any, one, quorum, or all</td>
+</tr>
+<tr>
+<td>history</td>
+<td>显示执行命令历史，类似linux的history</td>
+</tr>
+<tr>
+<td>settings</td>
+<td>输出当前的设置项</td>
+</tr>
+<tr>
+<td>clear</td>
+<td>清除数据库设置或者保留策略 clear [ database | db | retention policy | rp ]</td>
+</tr>
+<tr>
+<td>exit/quit/ctrl+d</td>
+<td>退出influx</td>
+</tr>
+<tr>
+<td>show databases</td>
+<td>显示所有数据库的名称</td>
+</tr>
+<tr>
+<td>show series</td>
+<td>显示所有series信息</td>
+</tr>
+<tr>
+<td>show measurements</td>
+<td>显示所有指标信息，相当于表</td>
+</tr>
+<tr>
+<td>show tag keys</td>
+<td>显示所有tag信息</td>
+</tr>
+<tr>
+<td>show field keys</td>
+<td>显示所有field信息</td>
+</tr>
+<tr>
+<td>insert</td>
+<td>写入数据insert into <retention policy> <line protocol></td>
+</tr>
+</tbody></table>
+<p>influx命令的一些示例</p>
+<ul>
+<li>连接服务器、认证 connect和auth</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@test25 ~]# influx -database &#39;mydb&#39; -host &#39;localhost&#39; -port &#39;8086&#39;</span><br><span class="line">Connected to http:&#x2F;&#x2F;localhost:8086 version 1.6.1</span><br><span class="line">InfluxDB shell version: 1.6.2</span><br><span class="line">&gt; connect localhost:8086</span><br><span class="line">&gt; auth</span><br><span class="line">username: lingyue</span><br><span class="line">password: </span><br><span class="line">&gt; </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>显示设置 settings</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&gt; settings</span><br><span class="line">Setting           Value</span><br><span class="line">--------          --------</span><br><span class="line">Host              localhost:8086</span><br><span class="line">Username          </span><br><span class="line">Database          mydb</span><br><span class="line">RetentionPolicy   </span><br><span class="line">Pretty            false</span><br><span class="line">Format            column</span><br><span class="line">Write Consistency all</span><br><span class="line">Chunked           true</span><br><span class="line">Chunk Size        0</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>显示数据 show databases</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&gt; show databases</span><br><span class="line">name: databases</span><br><span class="line">name</span><br><span class="line">----</span><br><span class="line">jmeter</span><br><span class="line">_internal</span><br><span class="line">test</span><br><span class="line">mydb</span><br><span class="line">pirates</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>切换database use databaseName</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; use mydb</span><br><span class="line">Using database mydb</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>显示指标 show measurements</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt; show measurements</span><br><span class="line">name: measurements</span><br><span class="line">name</span><br><span class="line">----</span><br><span class="line">cpu_load_short</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>显示tag</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&gt; show tag keys</span><br><span class="line">name: cpu_load_short</span><br><span class="line">tagKey</span><br><span class="line">------</span><br><span class="line">direction</span><br><span class="line">host</span><br><span class="line">region</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>显示series</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&gt; show series</span><br><span class="line">key</span><br><span class="line">---</span><br><span class="line">cpu_load_short,direction&#x3D;in,host&#x3D;server01,region&#x3D;us-west</span><br><span class="line">cpu_load_short,host&#x3D;server01,region&#x3D;us-west</span><br><span class="line">cpu_load_short,host&#x3D;server02</span><br><span class="line">cpu_load_short,host&#x3D;server02,region&#x3D;us-west</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>显示filed</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt; show field keys</span><br><span class="line">name: cpu_load_short</span><br><span class="line">fieldKey fieldType</span><br><span class="line">-------- ---------</span><br><span class="line">value    float</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>指定输出格式</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; format json</span><br><span class="line">&gt; show databases</span><br><span class="line">&#123;&quot;results&quot;:[&#123;&quot;series&quot;:[&#123;&quot;name&quot;:&quot;databases&quot;,&quot;columns&quot;:[&quot;name&quot;],&quot;values&quot;:[[&quot;jmeter&quot;],[&quot;_internal&quot;],[&quot;test&quot;],[&quot;mydb&quot;],[&quot;pirates&quot;]]&#125;]&#125;]&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>格式化json输出</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">&gt; pretty</span><br><span class="line">Pretty print enabled</span><br><span class="line">&gt; show databases</span><br><span class="line">&#123;</span><br><span class="line">    &quot;results&quot;: [</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;series&quot;: [</span><br><span class="line">                &#123;</span><br><span class="line">                    &quot;name&quot;: &quot;databases&quot;,</span><br><span class="line">                    &quot;columns&quot;: [</span><br><span class="line">                        &quot;name&quot;</span><br><span class="line">                    ],</span><br><span class="line">                    &quot;values&quot;: [</span><br><span class="line">                        [</span><br><span class="line">                            &quot;jmeter&quot;</span><br><span class="line">                        ],</span><br><span class="line">                        [</span><br><span class="line">                            &quot;_internal&quot;</span><br><span class="line">                        ],</span><br><span class="line">                        [</span><br><span class="line">                            &quot;test&quot;</span><br><span class="line">                        ],</span><br><span class="line">                        [</span><br><span class="line">                            &quot;mydb&quot;</span><br><span class="line">                        ],</span><br><span class="line">                        [</span><br><span class="line">                            &quot;pirates&quot;</span><br><span class="line">                        ]</span><br><span class="line">                    ]</span><br><span class="line">                &#125;</span><br><span class="line">            ]</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>显示执行命令历史 history</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&gt; history</span><br><span class="line">create database test</span><br><span class="line">show databases</span><br><span class="line">……</span><br><span class="line">format json</span><br><span class="line">show databases</span><br><span class="line">pretty</span><br><span class="line">show databases</span><br><span class="line">&gt; </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>insert<br>InfluxDB中没有显式的新建表的语句，只能通过insert数据的方式来建立新表<br>增加数据采用insert的方式，要注意的是 InfluxDB的insert中，表名与数据之间用逗号（,）分隔，tag和field之间用 空格分隔，多个tag或者多个field之间用逗号（,）分隔</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&gt; INSERT treasures,captain_id&#x3D;pirate_king value&#x3D;2</span><br><span class="line">&gt; SHOW RETENTION POLICIES ON mydb</span><br><span class="line">name    duration shardGroupDuration replicaN default</span><br><span class="line">----    -------- ------------------ -------- -------</span><br><span class="line">autogen 0s       168h0m0s           1        true</span><br><span class="line">&gt; INSERT INTO autogen treasures,captain_id&#x3D;pirate_king value&#x3D;2</span><br><span class="line">&gt; </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>select 查询数据<br>和sql结构一致</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&gt; select * from cpu_load_short</span><br><span class="line">name: cpu_load_short</span><br><span class="line">time                direction host     region  value</span><br><span class="line">----                --------- ----     ------  -----</span><br><span class="line">1422568543702900257 in        server01 us-west 2</span><br><span class="line">1422568543702900257           server02 us-west 0.55</span><br><span class="line">1434055562000000000           server01 us-west 0.64</span><br><span class="line">1536579271011551389           server02         0.67</span><br><span class="line">&gt; </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>drop 删除measurement和database</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">&gt; show databases</span><br><span class="line">name: databases</span><br><span class="line">name</span><br><span class="line">----</span><br><span class="line">jmeter</span><br><span class="line">_internal</span><br><span class="line">test</span><br><span class="line">mydb</span><br><span class="line">pirates</span><br><span class="line">&gt; use test</span><br><span class="line">Using database test</span><br><span class="line">&gt; show measurements</span><br><span class="line">name: measurements</span><br><span class="line">name</span><br><span class="line">----</span><br><span class="line">disk_free</span><br><span class="line">&gt; drop measurement disk_free</span><br><span class="line">&gt; show measurements</span><br><span class="line">&gt; drop database test</span><br><span class="line">&gt; show databases</span><br><span class="line">name: databases</span><br><span class="line">name</span><br><span class="line">----</span><br><span class="line">jmeter</span><br><span class="line">_internal</span><br><span class="line">mydb</span><br><span class="line">pirates</span><br><span class="line">&gt; </span><br></pre></td></tr></table></figure></div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined" rel="external nofollow noreferrer">Thaons</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://kococ.cn/posts/55494/">https://kococ.cn/posts/55494/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://kococ.cn" target="_blank">北青永恒</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%BF%99%E9%87%8C%E5%86%99%E6%A0%87%E7%AD%BE/">这里写标签</a></div><div class="post_share"><div class="social-share" data-image="https://gitee.com/xoxoyun/img/raw/master/image/0071.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/posts/8025/"><img class="next-cover" src="https://gitee.com/xoxoyun/img/raw/master/image/0141.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Telegraf+InfluxDB+Grafana+Docker搭建服务器监控平台</div></div></a></div></nav></article></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2018 - 2020 By Thaons</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">既来之 则安之</div><div class="icp"><a target="_blank" rel="noopener external nofollow noreferrer" href="http://beian.miit.gov.cn/"><img class="icp-icon" src="https://gitee.com/xoxoyun/img/raw/master/image/icp.png"/><span>豫ICP备20001100号</span></a></div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a>
+ <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><div class="aplayer no-destroy" data-id="964294791" data-server="netease" data-type="playlist" data-fixed="true" data-mini="true" data-listFolded="true" data-order="random" data-preload="none" data-autoplay="true" muted></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/gh/metowolf/MetingJS@1.2/dist/Meting.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = [
+  'title',
+  '#config_change',
+  '#body-wrap',
+  '#rightside-config-hide',
+  '#rightside-config-show',
+  '.js-pjax'
+]
+
+if (false) {
+  pjaxSelectors.unshift('meta[property="og:image"]', 'meta[property="og:title"]', 'meta[property="og:url"]')
+}
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  $('script[data-pjax]').each(function () {
+    $(this).parent().append($(this).remove())
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  if (typeof gtag === 'function') {
+    gtag('config', '', {'page_path': window.location.pathname});
+  }
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // Analytics
+  if (false) {
+    MtaH5.pgv()
+  }
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+
+document.addEventListener('pjax:send', function () {
+  typeof preloader === 'object' && preloader.initLoading()
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  $(window).off('scroll')
+
+  //reset readmode
+  $('body').hasClass('read-mode') && $('body').removeClass('read-mode')
+
+})</script><script>(function(){
+  const bp = document.createElement('script');
+  const curProtocol = window.location.protocol.split(':')[0];
+  if (curProtocol === 'https'){
+  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+  }
+  else{
+  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+  }
+  bp.dataset.pjax = ''
+  const s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(bp, s);
+})()</script></div></body></html>
