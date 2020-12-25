@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>测试订阅发送</title>
+      <link href="/posts/48271/"/>
+      <url>/posts/48271/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      <categories>
+          
+          <category> 这里写分类 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 这里写标签 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>PrometheusAlert</title>
       <link href="/posts/22341/"/>
       <url>/posts/22341/</url>
